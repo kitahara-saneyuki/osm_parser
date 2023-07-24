@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+.ipynb_checkpoints/
+venv/
+data/
+
+.DS_store
+*.pyc
+*.log
+latest
+*.bak
+*.out
+*.Identifier
+dump.rdb
