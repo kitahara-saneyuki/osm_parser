@@ -1,5 +1,8 @@
 dc := docker compose
 
+init:
+	$(dc) up airflow-init
+
 up:
 	$(dc) up -d
 

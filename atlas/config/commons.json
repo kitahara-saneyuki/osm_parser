@@ -1,0 +1,5 @@
+{
+    "admin_email": "airflow@example.com",
+    "atlas_region": "bristol",
+    "download_server_url": "https://download.geofabrik.de/"
+}

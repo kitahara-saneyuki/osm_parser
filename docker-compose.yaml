@@ -77,6 +77,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/${AIRFLOW_APP}/logs:/opt/airflow/logs
     - ${AIRFLOW_PROJ_DIR:-.}/${AIRFLOW_APP}/config:/opt/airflow/config
     - ${AIRFLOW_PROJ_DIR:-.}/${AIRFLOW_APP}/plugins:/opt/airflow/plugins
+    - ${AIRFLOW_PROJ_DIR:-.}/data:/opt/airflow/data
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -100,6 +101,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    ports:
+      - 5432:5432
 
   redis:
     image: redis:latest
@@ -246,7 +249,9 @@ services:
           echo
         fi
         mkdir -p /sources/${AIRFLOW_APP}/logs /sources/${AIRFLOW_APP}/dags /sources/${AIRFLOW_APP}/plugins
+        mkdir -p /sources/data/osm /sources/data/temp /sources/data/output
         chown -R "${AIRFLOW_UID}:0" /sources/${AIRFLOW_APP}/{logs,dags,plugins}
+        chown -R "${AIRFLOW_UID}:0" /sources/data
         exec /entrypoint airflow version
     # yamllint enable rule:line-length
     environment:
