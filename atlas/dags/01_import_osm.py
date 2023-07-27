@@ -11,34 +11,24 @@ from airflow.models import Variable
 from utils.utils import (run_shell_command, regional_config, db_conn, db_pass, add_conn)
 
 
-@task
+@task(task_id="01_set_variable")
 def set_variable():
     common_config = open("config/commons.json")
     for k, v in json.load(common_config).items():
         Variable.set(key=k, value=v, serialize_json=True)
     add_conn(db_conn(Variable.get(key="conn_default", deserialize_json=True)["db_conn"]))
     try:
-        atlas_region = Variable.get(key="atlas_region").strip('\"')
-        regional_cfg = open("config/regions/{atlas_region}.json".format(atlas_region=atlas_region))
-        Variable.set(key=regional_config(atlas_region), value=json.load(regional_cfg), serialize_json=True)
+        for mode in Variable.get(key="traffic_mode_allowed", deserialize_json=True):
+            mode_json = open("config/modes/{mode}.json".format(mode=mode))
+            Variable.set(key="traffic_mode_{mode}".format(mode=mode), value=json.load(mode_json), serialize_json=True)
+        for region in Variable.get(key="atlas_region_allowed", deserialize_json=True):
+            region_json = open("config/regions/{region}.json".format(region=region))
+            Variable.set(key=regional_config(region), value=json.load(region_json), serialize_json=True)
     except FileNotFoundError as exc:
         raise AirflowException('Regional configuration file not found!')
 
 
-@task
-def download_pbf():
-    atlas_region = Variable.get(key="atlas_region").strip('\"')
-    regional_cfg = Variable.get(key=regional_config(atlas_region), deserialize_json=True)
-    filename = "{atlas_region}-latest.osm.pbf".format(atlas_region=atlas_region)
-    run_shell_command("curl -o {pbf_path}{filename} {download_server_url}{download_pbf_url}{filename}".format(
-        pbf_path="data/osm/",
-        download_server_url=regional_cfg["download_server_url"],
-        download_pbf_url=regional_cfg["download_pbf_url"],
-        filename=filename,
-    ))
-
-
-@task
+@task(task_id="02_create_pgpass")
 def create_pgpass(default=False):
     pg_conn = Variable.get(key="conn_default", deserialize_json=True)
     atlas_region = "default"
@@ -52,13 +42,13 @@ def create_pgpass(default=False):
     run_shell_command("chmod 600 {pgpass_file}".format(pgpass_file=pgpass_file))
 
 
-@task
+@task(task_id="03_create_db")
 def create_db():
     atlas_region = Variable.get(key="atlas_region").strip('\"')
     regional_cfg = Variable.get(key=regional_config(atlas_region), deserialize_json=True)
     regional_conn = regional_cfg["db_conn"]
     default_conn = Variable.get(key="conn_default", deserialize_json=True)["db_conn"]
-    run_shell_command("dags/sql/commons/create_db.sh {default_pgpass} {db_pgpass} {user} \
+    run_shell_command("dags/sql/01_import_osm/01_create_db.sh {default_pgpass} {db_pgpass} {user} \
                       {password} {schema} {default_host} {default_user} {default_schema}".format(
         default_pgpass="config/default.pgpass",
         db_pgpass="config/{atlas_region}.pgpass".format(
@@ -74,12 +64,25 @@ def create_db():
     add_conn(db_conn(regional_cfg["db_conn"]))
 
 
-@task
+@task(task_id="04_download_pbf")
+def download_pbf():
+    atlas_region = Variable.get(key="atlas_region").strip('\"')
+    regional_cfg = Variable.get(key=regional_config(atlas_region), deserialize_json=True)
+    filename = "{atlas_region}-latest.osm.pbf".format(atlas_region=atlas_region)
+    run_shell_command("curl -o {pbf_path}{filename} {download_server_url}{download_pbf_url}{filename}".format(
+        pbf_path="data/osm/",
+        download_server_url=regional_cfg["download_server_url"],
+        download_pbf_url=regional_cfg["download_pbf_url"],
+        filename=filename,
+    ))
+
+
+@task(task_id="05_osm2pgsql")
 def osm2pgsql():
     atlas_region = Variable.get(key="atlas_region").strip('\"')
     regional_cfg = Variable.get(key=regional_config(atlas_region), deserialize_json=True)
     regional_conn = regional_cfg["db_conn"]
-    run_shell_command("dags/sql/import_osm/osm2pgsql.sh {db_pgpass} {pbf_path}{filename} \
+    run_shell_command("dags/sql/01_import_osm/03_osm2pgsql.sh {db_pgpass} {pbf_path}{filename} \
                       {schema} {user} {host}".format(
         db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
         pbf_path="data/osm/",
@@ -91,9 +94,7 @@ def osm2pgsql():
 
 
 with DAG(
-    "import_osm",
-    # These args will get passed on to each operator
-    # You can override them on a per-task basis during operator initialization
+    "01_import_osm",
     default_args={
         "depends_on_past": False,
         "email": ["airflow@example.com"],
@@ -101,20 +102,8 @@ with DAG(
         "email_on_retry": False,
         "retries": 1,
         "retry_delay": timedelta(minutes=5),
-        # 'queue': 'bash_queue',
-        # 'pool': 'backfill',
-        # 'priority_weight': 10,
-        # 'end_date': datetime(2016, 1, 1),
-        # 'wait_for_downstream': False,
-        # 'sla': timedelta(hours=2),
-        # 'execution_timeout': timedelta(seconds=300),
-        # 'on_failure_callback': some_function, # or list of functions
-        # 'on_success_callback': some_other_function, # or list of functions
-        # 'on_retry_callback': another_function, # or list of functions
-        # 'sla_miss_callback': yet_another_function, # or list of functions
-        # 'trigger_rule': 'all_success'
     },
-    description="Atlas DAG",
+    description="Init DB, download and import OSM PBF file from Geofabrik",
     schedule=timedelta(days=1),
     start_date=datetime(2021, 1, 1),
     catchup=False,

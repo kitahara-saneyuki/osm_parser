@@ -1,0 +1,12 @@
+{
+    "download_server_url": "https://download.geofabrik.de/",
+    "download_pbf_url": "north-america/us/",
+    "db_conn": {
+        "id": "washington",
+        "type": "postgres",
+        "host": "postgres",
+        "schema": "washington",
+        "user": "washington",
+        "password": "washington"
+    }
+}

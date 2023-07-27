@@ -1,7 +1,14 @@
 {
     "admin_email": "airflow@example.com",
-    "atlas_region": "bristol",
+    "traffic_mode_allowed": [
+        "pedestrian",
+        "road"
+    ],
+    "atlas_region_allowed": [
+        "washington"
+    ],
     "traffic_mode": "road",
+    "atlas_region": "washington",
     "conn_default": {
         "db_conn": {
             "id": "airflow",

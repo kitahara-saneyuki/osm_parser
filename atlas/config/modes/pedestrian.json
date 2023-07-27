@@ -1,0 +1,25 @@
+{
+    "highways": [
+        "motorway",
+        "motorway_link",
+        "trunk",
+        "trunk_link",
+        "primary",
+        "primary_link",
+        "secondary",
+        "secondary_link",
+        "tertiary",
+        "tertiary_link",
+        "residential",
+        "living_street",
+        "unclassified",
+        "service",
+        "pedestrian",
+        "footway",
+        "track",
+        "path",
+        "cycleway",
+        "bridleway",
+        "road"
+    ]
+}
