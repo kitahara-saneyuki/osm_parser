@@ -1,5 +1,15 @@
 {
     "admin_email": "airflow@example.com",
     "atlas_region": "bristol",
-    "download_server_url": "https://download.geofabrik.de/"
+    "traffic_mode": "road",
+    "conn_default": {
+        "db_conn": {
+            "id": "airflow",
+            "type": "postgres",
+            "host": "postgres",
+            "schema": "airflow",
+            "user": "airflow",
+            "password": "airflow"
+        }
+    }
 }

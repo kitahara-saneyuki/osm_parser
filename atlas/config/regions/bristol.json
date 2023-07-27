@@ -1,3 +1,12 @@
 {
-    "download_pbf_url": "europe/great-britain/england/"
+    "download_server_url": "https://download.geofabrik.de/",
+    "download_pbf_url": "europe/great-britain/england/",
+    "db_conn": {
+        "id": "bristol",
+        "type": "postgres",
+        "host": "postgres",
+        "schema": "bristol",
+        "user": "bristol",
+        "password": "bristol"
+    }
 }

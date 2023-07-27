@@ -1,0 +1,2 @@
+haversine==2.8.0
+csvkit==1.1.1
