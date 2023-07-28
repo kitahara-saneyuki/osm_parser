@@ -19,24 +19,22 @@ def run_shell_command(command_line):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        process_output, _ =  command_line_process.communicate()
+        process_output, _ = command_line_process.communicate()
         for line in process_output.decode("utf-8").split("\n"):
             logging.info(line)
         process_output = StringIO(process_output.decode("utf-8"))
     except Exception as exc:
-        logging.info('Exception occurred: ' + str(exc))
-        logging.info('Subprocess failed')
+        logging.info("Exception occurred: " + str(exc))
+        logging.info("Subprocess failed")
         return False
     else:
         # no exception was raised
-        logging.info('Subprocess finished')
+        logging.info("Subprocess finished")
     return True
 
 
 def regional_config(atlas_region):
-    return "regional_config_{atlas_region}".format(
-        atlas_region=atlas_region
-    )
+    return "regional_config_{atlas_region}".format(atlas_region=atlas_region)
 
 
 def db_conn(conn):
@@ -47,7 +45,7 @@ def db_conn(conn):
         host=conn["host"],
         login=conn["user"],
         password=conn["password"],
-        port=5432
+        port=5432,
     )
 
 
@@ -57,7 +55,7 @@ def db_pass(conn):
         schema=conn["schema"],
         username=conn["user"],
         password=conn["password"],
-        port=5432
+        port=5432,
     )
 
 
@@ -66,5 +64,5 @@ def add_conn(conn):
     try:
         session.add(conn)
         session.commit()
-    except exc.IntegrityError as e:
+    except exc.IntegrityError:
         session.rollback()

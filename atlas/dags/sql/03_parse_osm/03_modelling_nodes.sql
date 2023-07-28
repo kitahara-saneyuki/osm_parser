@@ -11,5 +11,4 @@ create table osm_modelingnodes as
         on osm_nodes.id = ANY(osm_roads.nodes);
 
 create index osm_modelingnodes_idx on osm_modelingnodes using btree(id);
-drop table if exists osm_nodes;
 commit;

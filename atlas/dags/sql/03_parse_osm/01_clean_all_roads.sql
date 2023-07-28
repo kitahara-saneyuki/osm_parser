@@ -1,5 +1,3 @@
-drop table if exists osm_rels;
-
 -- Step 2.1: all the roads
 begin;
 drop table if exists osm_highways_temp;
@@ -19,6 +17,5 @@ create table osm_highways as
            temp_tags -> 'maxspeed' as maxspeed
     from osm_highways_temp;
 
-drop table if exists osm_ways;
 drop table if exists osm_highways_temp;
 commit;

@@ -16,7 +16,7 @@ with DAG(
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
-        "retry_delay": timedelta(minutes=5)
+        "retry_delay": timedelta(minutes=5),
     },
     description="Parse the OSM data",
     schedule=timedelta(days=1),
@@ -24,19 +24,28 @@ with DAG(
     catchup=False,
     tags=["atlas"],
 ) as dag:
+    atlas_region = "washington"
+    traffic_mode = "road"
+    traffic_mode_highways = []
+    try:
+        atlas_region = Variable.get(key="atlas_region").strip('"')
+        traffic_mode = Variable.get(key="traffic_mode").strip('"')
+        traffic_mode_highways = Variable.get(
+            key="traffic_mode_{mode}".format(mode=traffic_mode), deserialize_json=True
+        )["highways"]
+    except KeyError:
+        pass
+    traffic_mode_highways = "'" + "', '".join(traffic_mode_highways) + "'"
+
     clean_all_roads = PostgresOperator(
         task_id="01_clean_all_roads",
-        postgres_conn_id=Variable.get(key="atlas_region").strip('\"'),
-        sql="sql/02_parse_osm/01_clean_all_roads.sql",
+        postgres_conn_id=atlas_region,
+        sql="sql/03_parse_osm/01_clean_all_roads.sql",
     )
-
-    traffic_mode_highways = "'" + "', '".join(Variable.get(key="traffic_mode_{mode}".format(
-        mode=Variable.get(key="traffic_mode").strip('\"')
-    ), deserialize_json=True)["highways"]) + "'"
 
     select_roads = PostgresOperator(
         task_id="02_select_roads",
-        postgres_conn_id=Variable.get(key="atlas_region").strip('\"'),
+        postgres_conn_id=atlas_region,
         sql=f"""
             begin;
                 update osm_highways set
@@ -59,24 +68,26 @@ with DAG(
 
     modelling_nodes = PostgresOperator(
         task_id="03_modelling_nodes",
-        postgres_conn_id=Variable.get(key="atlas_region").strip('\"'),
-        sql="sql/02_parse_osm/03_modelling_nodes.sql",
+        postgres_conn_id=atlas_region,
+        sql="sql/03_parse_osm/03_modelling_nodes.sql",
     )
 
     routing_nodes = PostgresOperator(
         task_id="04_routing_nodes",
-        postgres_conn_id=Variable.get(key="atlas_region").strip('\"'),
-        sql="sql/02_parse_osm/04_routing_nodes.sql",
+        postgres_conn_id=atlas_region,
+        sql="sql/03_parse_osm/04_routing_nodes.sql",
     )
 
     new_edge_table = PostgresOperator(
         task_id="05_new_edge_table",
-        postgres_conn_id=Variable.get(key="atlas_region").strip('\"'),
-        sql="sql/02_parse_osm/05_new_edge_table.sql",
+        postgres_conn_id=atlas_region,
+        sql="sql/03_parse_osm/05_new_edge_table.sql",
     )
 
-    clean_all_roads >> \
-    select_roads >> \
-    modelling_nodes >> \
-    routing_nodes >> \
-    new_edge_table
+    (
+        clean_all_roads
+        >> select_roads
+        >> modelling_nodes
+        >> routing_nodes
+        >> new_edge_table
+    )
