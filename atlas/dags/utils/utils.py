@@ -1,13 +1,8 @@
-import shlex
 import logging
+import shlex
 import subprocess
 
 from io import StringIO
-
-from airflow import settings
-from airflow.models.connection import Connection
-
-from sqlalchemy import exc
 
 
 def run_shell_command(command_line):
@@ -37,32 +32,8 @@ def regional_config(atlas_region):
     return "regional_config_{atlas_region}".format(atlas_region=atlas_region)
 
 
-def db_conn(conn):
-    return Connection(
-        conn_id=conn["id"],
-        conn_type=conn["type"],
-        schema=conn["schema"],
-        host=conn["host"],
-        login=conn["user"],
-        password=conn["password"],
-        port=5432,
+def pbf_filename(atlas_region, regional_cfg):
+    return "{atlas_region}-{atlas_region_timestamp}.osm.pbf".format(
+        atlas_region=atlas_region,
+        atlas_region_timestamp=regional_cfg["download_pbf_timestamp"],
     )
-
-
-def db_pass(conn):
-    return "{host}:{port}:{schema}:{username}:{password}".format(
-        host=conn["host"],
-        schema=conn["schema"],
-        username=conn["user"],
-        password=conn["password"],
-        port=5432,
-    )
-
-
-def add_conn(conn):
-    session = settings.Session()
-    try:
-        session.add(conn)
-        session.commit()
-    except exc.IntegrityError:
-        session.rollback()

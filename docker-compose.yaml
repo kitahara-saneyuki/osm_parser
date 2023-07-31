@@ -248,7 +248,6 @@ services:
           echo
         fi
         mkdir -p /sources/${AIRFLOW_APP}/logs /sources/${AIRFLOW_APP}/dags /sources/${AIRFLOW_APP}/plugins
-        mkdir -p /sources/data/osm /sources/data/temp /sources/data/output
         chown -R "${AIRFLOW_UID}:0" /sources/${AIRFLOW_APP}/{logs,dags,plugins}
         chown -R "${AIRFLOW_UID}:0" /sources/data
         exec /entrypoint airflow version

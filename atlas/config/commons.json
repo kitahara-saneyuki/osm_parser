@@ -9,6 +9,7 @@
     ],
     "traffic_mode": "road",
     "atlas_region": "washington",
+    "sql_chunk": 100000,
     "conn_default": {
         "db_conn": {
             "id": "airflow",
@@ -16,7 +17,8 @@
             "host": "postgres",
             "schema": "airflow",
             "user": "airflow",
-            "password": "airflow"
+            "password": "airflow",
+            "port": 5432
         }
     }
 }

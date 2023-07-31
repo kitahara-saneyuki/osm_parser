@@ -8,7 +8,16 @@ from airflow import DAG, AirflowException
 from airflow.decorators import task
 from airflow.models import Variable
 
-from utils.utils import run_shell_command, regional_config, db_conn, db_pass, add_conn
+from utils.db import (
+    db_conn,
+    db_pass,
+    add_conn,
+)
+from utils.utils import (
+    run_shell_command,
+    regional_config,
+    pbf_filename,
+)
 
 
 @task(task_id="01_set_variable")
@@ -61,8 +70,8 @@ def create_db():
     regional_conn = regional_cfg["db_conn"]
     default_conn = Variable.get(key="conn_default", deserialize_json=True)["db_conn"]
     run_shell_command(
-        "dags/sql/01_import_osm/01_create_db.sh {default_pgpass} {db_pgpass} {user} \
-                      {password} {schema} {default_host} {default_user} {default_schema}".format(
+        "dags/sql/01_import_osm/01_create_db.sh {default_pgpass} {db_pgpass} {user} {password} {schema} \
+                      {default_host} {default_user} {default_schema} {atlas_region}".format(
             default_pgpass="config/default.pgpass",
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
             user=regional_conn["user"],
@@ -71,6 +80,7 @@ def create_db():
             default_host=default_conn["host"],
             default_user=default_conn["user"],
             default_schema=default_conn["schema"],
+            atlas_region=atlas_region,
         )
     )
     add_conn(db_conn(regional_cfg["db_conn"]))
@@ -82,10 +92,10 @@ def download_pbf():
     regional_cfg = Variable.get(
         key=regional_config(atlas_region), deserialize_json=True
     )
-    filename = "{atlas_region}-latest.osm.pbf".format(atlas_region=atlas_region)
+    filename = pbf_filename(atlas_region, regional_cfg)
     run_shell_command(
         "curl -o {pbf_path}{filename} {download_server_url}{download_pbf_url}{filename}".format(
-            pbf_path="data/osm/",
+            pbf_path="data/{atlas_region}/osm/".format(atlas_region=atlas_region),
             download_server_url=regional_cfg["download_server_url"],
             download_pbf_url=regional_cfg["download_pbf_url"],
             filename=filename,
@@ -104,8 +114,8 @@ def osm2pgsql():
         "dags/sql/01_import_osm/03_osm2pgsql.sh {db_pgpass} {pbf_path}{filename} \
             {schema} {user} {host}".format(
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
-            pbf_path="data/osm/",
-            filename="{atlas_region}-latest.osm.pbf".format(atlas_region=atlas_region),
+            pbf_path="data/{atlas_region}/osm/".format(atlas_region=atlas_region),
+            filename=pbf_filename(atlas_region, regional_cfg),
             schema=regional_conn["schema"],
             user=regional_conn["user"],
             host=regional_conn["host"],
