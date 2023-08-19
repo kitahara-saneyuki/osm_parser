@@ -9,11 +9,10 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.decorators import task
+from airflow.operators.python import get_current_context
 from airflow.models import Variable
 
-from airflow.providers.postgres.operators.postgres import PostgresOperator
-
-from utils.db import PGConn
+from utils.db import PGConn, PostgresOperator
 from utils.haversine import haversine_length
 from utils.utils import run_shell_command, regional_config
 
@@ -34,7 +33,7 @@ select_latlon = """
 
 @task(task_id="06_cut_roads")
 def cut_roads():
-    atlas_region = Variable.get(key="atlas_region").strip('"')
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     pg_conn = PGConn(
         Variable.get(key=regional_config(atlas_region), deserialize_json=True)[
             "db_conn"
@@ -154,7 +153,7 @@ def cut_roads():
 
 @task(task_id="07_import_edges")
 def import_edges():
-    atlas_region = Variable.get(key="atlas_region").strip('"')
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     regional_cfg = Variable.get(
         key=regional_config(atlas_region), deserialize_json=True
     )
@@ -187,29 +186,27 @@ with DAG(
     catchup=False,
     tags=["atlas"],
 ) as dag:
-    atlas_region = "washington"
-    traffic_mode = "road"
     traffic_mode_highways = []
     try:
-        atlas_region = Variable.get(key="atlas_region").strip('"')
-        traffic_mode = Variable.get(key="traffic_mode").strip('"')
+        traffic_mode = Variable.get("traffic_mode", default_var="road").strip('"')
         traffic_mode_highways = Variable.get(
             key="traffic_mode_{traffic_mode}".format(traffic_mode=traffic_mode),
+            default_var={"highways": []},
             deserialize_json=True,
         )["highways"]
-    except KeyError:
-        pass
+    except Exception as exc:
+        raise exc
     traffic_mode_highways = "'" + "', '".join(traffic_mode_highways) + "'"
 
     clean_all_roads = PostgresOperator(
         task_id="01_clean_all_roads",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql="sql/03_parse_osm/01_clean_all_roads.sql",
     )
 
     select_roads = PostgresOperator(
         task_id="02_select_roads",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql=f"""
             begin;
                 update osm_highways set
@@ -237,25 +234,25 @@ with DAG(
 
     modelling_nodes = PostgresOperator(
         task_id="03_modelling_nodes",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql="sql/03_parse_osm/03_modelling_nodes.sql",
     )
 
     routing_nodes = PostgresOperator(
         task_id="04_routing_nodes",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql="sql/03_parse_osm/04_routing_nodes.sql",
     )
 
     new_edge_table = PostgresOperator(
         task_id="05_new_edge_table",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql="sql/03_parse_osm/05_new_edge_table.sql",
     )
 
     post_processing = PostgresOperator(
         task_id="08_post_processing",
-        postgres_conn_id=atlas_region,
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql="sql/03_parse_osm/08_post_processing.sql",
     )
 

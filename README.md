@@ -1,6 +1,7 @@
 # OSM Routing Engine
 
-[![Atlas lint](https://github.com/vincentj93/osm_routing/actions/workflows/flake8.yml/badge.svg)](https://github.com/vincentj93/osm_routing/actions/workflows/flake8.yml)
+[![Lint check](https://github.com/vincentj93/osm_routing/actions/workflows/lint.yml/badge.svg)](https://github.com/vincentj93/osm_routing/actions/workflows/lint.yml)
+[![Atlas tests](https://github.com/vincentj93/osm_routing/actions/workflows/atlas.yml/badge.svg)](https://github.com/vincentj93/osm_routing/actions/workflows/atlas.yml)
 
 ## Installation
 
@@ -8,4 +9,3 @@
 make init
 make up
 ```
-

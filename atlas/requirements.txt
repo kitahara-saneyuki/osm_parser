@@ -1,5 +1,11 @@
 haversine==2.8.0
 csvkit==1.1.1
-flake8==5.0.4
+
+# test kit
 pytest==7.3.2
+pytest-cov==4.1.0
+pytest-order==1.1.0
+
+# code lint
+flake8==5.0.4
 black==23.3.0

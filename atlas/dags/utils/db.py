@@ -1,10 +1,16 @@
+import logging
 import psycopg2
 
 from airflow import settings
 from airflow.models.connection import Connection
+from airflow.providers.postgres.operators.postgres import PostgresOperator as _PostgresOperator
 
 from sqlalchemy import exc
 from psycopg2.extras import RealDictCursor
+
+
+class PostgresOperator(_PostgresOperator):
+    template_fields = [*_PostgresOperator.template_fields, "conn_id"]
 
 
 def db_conn(conn):
@@ -61,8 +67,8 @@ class PGConn:
             conn.close()
             return cursor_dump
         except psycopg2.Error as e:
-            print(e.pgerror)
-            print(e.diag.message_detail)
+            logging.error(e.pgerror)
+            logging.error(e.diag.message_detail)
 
     def run_query_map(self, query, id_col, table, id_arr):
         return {

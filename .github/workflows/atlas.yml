@@ -1,0 +1,50 @@
+name: Atlas tests
+
+on: push
+
+jobs:
+  atlas-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Cache Docker layers
+      uses: actions/cache@v3
+      with:
+        path: /tmp/.buildx-cache-atlas
+        key: ${{ runner.os }}-buildx-atlas-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-atlas-
+    - name: Build
+      uses: docker/build-push-action@v4
+      with:
+        push: false
+        load: true
+        tags: osm-routing/atlas:latest
+        file: ./atlas/Dockerfile
+        context: ./atlas/
+        cache-from: type=local,src=/tmp/.buildx-cache-atlas
+        cache-to: type=local,dest=/tmp/.buildx-cache-atlas-new,mode=max
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache-atlas
+        mv /tmp/.buildx-cache-atlas-new /tmp/.buildx-cache-atlas
+    - name: Init the airflow stack
+      run: | 
+        docker-compose up airflow-init
+        docker-compose up -d
+    - name: Run tests
+      run: |
+        docker-compose exec -T airflow-webserver airflow dags list
+        docker-compose exec -u root -T airflow-webserver chown -R default:root .
+        docker-compose exec -u root -T airflow-webserver chmod 0600 ./config/bristol.pgpass
+        docker-compose exec -u root -T airflow-webserver chmod 0600 ./config/default.pgpass
+        docker-compose exec -T airflow-webserver ls -Rlt
+        docker-compose exec -T airflow-webserver airflow dags unpause 01_import_osm
+        docker-compose exec -T airflow-webserver airflow dags unpause 03_parse_osm
+        docker-compose exec -T airflow-webserver pytest --disable-warnings --cov-report term --cov=dags
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01_import_osm -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 03_parse_osm -o yaml
+        docker-compose exec -T airflow-webserver find ./logs/ -path "*manual*" -type f -exec cat {} +

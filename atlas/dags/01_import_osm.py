@@ -5,7 +5,9 @@ import json
 from datetime import datetime, timedelta
 
 from airflow import DAG, AirflowException
+
 from airflow.decorators import task
+from airflow.operators.python import get_current_context
 from airflow.models import Variable
 
 from utils.db import (
@@ -52,18 +54,21 @@ def create_pgpass(default=False):
     pg_conn = Variable.get(key="conn_default", deserialize_json=True)
     atlas_region = "default"
     if not default:
-        atlas_region = Variable.get(key="atlas_region").strip('"')
+        atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
         pg_conn = Variable.get(key=regional_config(atlas_region), deserialize_json=True)
-    pgpass_file = "config/{atlas_region}.pgpass".format(atlas_region=atlas_region)
-    f = open(pgpass_file, "w")
-    f.write(db_pass(pg_conn["db_conn"]))
-    f.close()
-    run_shell_command("chmod 600 {pgpass_file}".format(pgpass_file=pgpass_file))
+    try:
+        pgpass_file = "config/{atlas_region}.pgpass".format(atlas_region=atlas_region)
+        f = open(pgpass_file, "w")
+        f.write(db_pass(pg_conn["db_conn"]))
+        f.close()
+        run_shell_command("chmod 600 {pgpass_file}".format(pgpass_file=pgpass_file))
+    except Exception:
+        pass
 
 
 @task(task_id="03_create_db")
 def create_db():
-    atlas_region = Variable.get(key="atlas_region").strip('"')
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     regional_cfg = Variable.get(
         key=regional_config(atlas_region), deserialize_json=True
     )
@@ -88,7 +93,7 @@ def create_db():
 
 @task(task_id="04_download_pbf")
 def download_pbf():
-    atlas_region = Variable.get(key="atlas_region").strip('"')
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     regional_cfg = Variable.get(
         key=regional_config(atlas_region), deserialize_json=True
     )
@@ -105,7 +110,7 @@ def download_pbf():
 
 @task(task_id="05_osm2pgsql")
 def osm2pgsql():
-    atlas_region = Variable.get(key="atlas_region").strip('"')
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     regional_cfg = Variable.get(
         key=regional_config(atlas_region), deserialize_json=True
     )
