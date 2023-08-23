@@ -43,7 +43,7 @@ It's very simple to add your own regions and / or transportation modes in Atlas:
 - Create your own configuration JSON file in the folder `atlas/config/regions` and / or `atlas/config/modes`,
 - Add your own regions / modes in the `atlas/config/commons.json`, field `atlas_region_allowed` or `traffic_mode_allowed`, so the new configuration can be found by the Airflow DAGs.
 
-#### Trigger Atlas pipeline
+#### Trigger Atlas pipeline, and output CSV format
 
 After your region is set up, in the terminal, run
 
@@ -52,6 +52,12 @@ make run region=<region>
 ```
 
 You can also trigger the pipeline through GUI or REST API.
+
+The output can be found at `data/<region>/output` folder, with 3 CSV files:
+
+- Node: 2 columns, latitude / longitude coordinate for each node. The column number is node ID (start from 0).
+- Graph: 3 columns: head -> tail of node ID, and the time_cost (in milliseconds).
+- Max node ID: the max ID for nodes.
 
 #### VSCode Python Interpreter Set up
 
