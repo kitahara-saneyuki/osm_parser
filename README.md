@@ -55,9 +55,9 @@ You can also trigger the pipeline through GUI or REST API.
 
 The output can be found at `data/<region>/output` folder, with 3 CSV files:
 
-- Node: 2 columns, latitude / longitude coordinate for each node. The column number is node ID (start from 0).
-- Graph: 3 columns: head -> tail of node ID, and the time_cost (in milliseconds).
-- Max node ID: the max ID for nodes.
+- `node`: 2 columns, latitude / longitude coordinate for each node. The column number is node ID (start from 0).
+- `graph`: 3 columns: head -> tail of node ID, and the time_cost (in milliseconds).
+- `max_node_id`: the max ID for nodes.
 
 #### VSCode Python Interpreter Set up
 
