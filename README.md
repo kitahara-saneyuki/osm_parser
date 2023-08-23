@@ -55,9 +55,9 @@ You can also trigger the pipeline through GUI or REST API.
 
 The output can be found at `data/<region>/output` folder, with 3 CSV files:
 
-- `node`: 2 columns, latitude / longitude coordinate for each node. The column number is node ID (start from 0).
-- `graph`: 3 columns: head -> tail of node ID, and the time_cost (in milliseconds).
-- `max_node_id`: the max ID for nodes.
+- `node`: 2 columns, latitude / longitude coordinate for each node. The column number is `node_id` (start from 0).
+- `graph`: 3 columns: head -> tail of `node_id`, representing each _arc_ of the _directed acyclic graph_(DAG) for the transportation network, and the `time_cost` (in milliseconds), serving as _weight_ of each arc in the DAG.
+- `max_node_id`: the max `node_id` for nodes.
 
 #### VSCode Python Interpreter Set up
 
