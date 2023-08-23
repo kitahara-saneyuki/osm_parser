@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG, AirflowException
 
+from airflow.api.client.local_client import Client
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 from airflow.models import Variable
@@ -128,6 +129,17 @@ def osm2pgsql():
     )
 
 
+@task(task_id="06_trigger_downstream")
+def trigger_downstream():
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
+    c = Client(None, None)
+    c.trigger_dag(
+        dag_id="03_parse_osm",
+        conf={"atlas_region": atlas_region},
+        execution_date=datetime.now().astimezone(),
+    )
+
+
 with DAG(
     "01_import_osm",
     default_args={
@@ -150,4 +162,5 @@ with DAG(
         >> create_db()
         >> download_pbf()
         >> osm2pgsql()
+        >> trigger_downstream()
     )

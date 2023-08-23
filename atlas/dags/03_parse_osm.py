@@ -8,6 +8,7 @@ import time
 from datetime import datetime, timedelta
 
 from airflow import DAG
+from airflow.api.client.local_client import Client
 from airflow.decorators import task
 from airflow.operators.python import get_current_context
 from airflow.models import Variable
@@ -170,6 +171,17 @@ def import_edges():
     )
 
 
+@task(task_id="10_trigger_downstream")
+def trigger_downstream():
+    atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
+    c = Client(None, None)
+    c.trigger_dag(
+        dag_id="05_export_osm",
+        conf={"atlas_region": atlas_region},
+        execution_date=datetime.now().astimezone(),
+    )
+
+
 with DAG(
     "03_parse_osm",
     default_args={
@@ -209,12 +221,6 @@ with DAG(
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
         sql=f"""
             begin;
-                update osm_highways set
-                    maxspeed = cast((cast(maxspeed as smallint) / 1.609344) as smallint) WHERE maxspeed ~ E'^\\d+$';
-                update osm_highways set
-                    maxspeed = rtrim(maxspeed, ' mph') WHERE maxspeed !~ E'^\\d+$';
-                update osm_highways set maxspeed = null WHERE maxspeed !~ E'^\\d+$';
-
                 drop table if exists osm_roads;
                 create table osm_roads as
                     select id, nodes, highway, access, oneway, name,
@@ -256,6 +262,12 @@ with DAG(
         sql="sql/03_parse_osm/08_post_processing.sql",
     )
 
+    assign_maxspeed = PostgresOperator(
+        task_id="09_assign_maxspeed",
+        postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
+        sql="sql/03_parse_osm/09_assign_maxspeed.sql",
+    )
+
     (
         clean_all_roads
         >> select_roads
@@ -265,4 +277,6 @@ with DAG(
         >> cut_roads()
         >> import_edges()
         >> post_processing
+        >> assign_maxspeed
+        >> trigger_downstream()
     )

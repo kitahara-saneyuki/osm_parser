@@ -26,14 +26,7 @@ def test_import_osm():
         conf={"atlas_region": "bristol"},
         execution_date=datetime.now().astimezone(),
     )
-    time.sleep(25)
-    logging.info("----- Testing parse OSM -----")
-    c.trigger_dag(
-        dag_id="03_parse_osm",
-        conf={"atlas_region": "bristol"},
-        execution_date=datetime.now().astimezone(),
-    )
-    time.sleep(25)
+    time.sleep(45)
 
     # Verifying data
     logging.info("----- Verifying OSM data -----")

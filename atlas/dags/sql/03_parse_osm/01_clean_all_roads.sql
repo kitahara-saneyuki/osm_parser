@@ -14,8 +14,18 @@ create table osm_highways as
            temp_tags -> 'access' as access,
            temp_tags -> 'oneway' as oneway,
            temp_tags -> 'name' as name,
-           temp_tags -> 'maxspeed' as maxspeed
+           temp_tags -> 'maxspeed' as maxspeed_str
     from osm_highways_temp;
 
 drop table if exists osm_highways_temp;
+commit;
+
+begin;
+alter table osm_highways add column maxspeed int;
+-- assume the unit of maxspeed is mph -- most of our use case is in US
+update osm_highways set maxspeed = cast(maxspeed_str as smallint) WHERE maxspeed_str ~ E'^\\d+$';
+-- convert the mph maxspeed
+update osm_highways set maxspeed = cast(rtrim(maxspeed_str, ' mph') as smallint) WHERE rtrim(maxspeed_str, ' mph') ~ E'^\\d+$';
+update osm_highways set maxspeed = null where not (maxspeed_str ~ E'^\\d+$' or rtrim(maxspeed_str, ' mph') ~ E'^\\d+$');
+alter table osm_highways drop column maxspeed_str;
 commit;
