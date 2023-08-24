@@ -171,6 +171,15 @@ def import_edges():
     )
 
 
+def assign_maxspeed(traffic_mode_highways):
+    return "begin;\n" + "\n".join([
+        "update osm_edges set maxspeed = {maxspeed} where highway = '{highway}' and maxspeed is null;".format(
+            maxspeed=maxspeed,
+            highway=highway,
+        ) for highway, maxspeed in traffic_mode_highways.items()
+    ]) + "commit;\n"
+
+
 @task(task_id="10_trigger_downstream")
 def trigger_downstream():
     atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
@@ -198,17 +207,17 @@ with DAG(
     catchup=False,
     tags=["atlas"],
 ) as dag:
-    traffic_mode_highways = []
+    traffic_mode_highways = {}
     try:
         traffic_mode = Variable.get("traffic_mode", default_var="road").strip('"')
         traffic_mode_highways = Variable.get(
             key="traffic_mode_{traffic_mode}".format(traffic_mode=traffic_mode),
-            default_var={"highways": []},
+            default_var={"highways": {}},
             deserialize_json=True,
         )["highways"]
     except Exception as exc:
         raise exc
-    traffic_mode_highways = "'" + "', '".join(traffic_mode_highways) + "'"
+    traffic_mode_highways_str = "'" + "', '".join(traffic_mode_highways.keys()) + "'"
 
     clean_all_roads = PostgresOperator(
         task_id="01_clean_all_roads",
@@ -229,7 +238,7 @@ with DAG(
                         nodes[array_length(nodes, 1)] as end_node,
                         nodes[2:array_length(nodes, 1) - 1] as middle_nodes,
                         tags from osm_highways
-                where highway = any(array[{traffic_mode_highways}]);
+                where highway = any(array[{traffic_mode_highways_str}]);
 
                 drop table if exists osm_highways;
                 create index osm_roads_idx on osm_roads using btree(id);
@@ -265,7 +274,7 @@ with DAG(
     assign_maxspeed = PostgresOperator(
         task_id="09_assign_maxspeed",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/09_assign_maxspeed.sql",
+        sql=assign_maxspeed(traffic_mode_highways),
     )
 
     (

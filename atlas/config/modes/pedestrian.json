@@ -1,25 +1,25 @@
 {
-    "highways": [
-        "motorway",
-        "motorway_link",
-        "trunk",
-        "trunk_link",
-        "primary",
-        "primary_link",
-        "secondary",
-        "secondary_link",
-        "tertiary",
-        "tertiary_link",
-        "residential",
-        "living_street",
-        "unclassified",
-        "service",
-        "pedestrian",
-        "footway",
-        "track",
-        "path",
-        "cycleway",
-        "bridleway",
-        "road"
-    ]
+    "highways": {
+        "motorway": 1,
+        "motorway_link": 1,
+        "trunk": 1,
+        "trunk_link": 1,
+        "primary": 1,
+        "primary_link": 1,
+        "secondary": 1,
+        "secondary_link": 1,
+        "tertiary": 1,
+        "tertiary_link": 1,
+        "residential": 1,
+        "living_street": 1,
+        "unclassified": 1,
+        "service": 1,
+        "pedestrian": 1,
+        "footway": 1,
+        "track": 1,
+        "path": 1,
+        "cycleway": 1,
+        "bridleway": 1,
+        "road": 1
+    }
 }

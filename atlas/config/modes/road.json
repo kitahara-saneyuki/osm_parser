@@ -1,18 +1,18 @@
 {
-    "highways": [
-        "trunk",
-        "trunk_link",
-        "primary",
-        "primary_link",
-        "secondary",
-        "secondary_link",
-        "tertiary",
-        "tertiary_link",
-        "residential",
-        "living_street",
-        "unclassified",
-        "road",
-        "motorway",
-        "motorway_link"
-    ]
+    "highways": {
+        "motorway": 65,
+        "motorway_link": 40,
+        "trunk": 55,
+        "trunk_link": 40,
+        "primary": 55,
+        "primary_link": 40,
+        "secondary": 40,
+        "secondary_link": 30,
+        "tertiary": 30,
+        "tertiary_link": 30,
+        "residential": 20,
+        "unclassified": 20,
+        "road": 20,
+        "living_street": 15
+    }
 }
