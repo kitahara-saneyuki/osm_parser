@@ -3,13 +3,24 @@
 [![Lint check](https://github.com/vincentj93/osm_routing/actions/workflows/lint.yml/badge.svg)](https://github.com/vincentj93/osm_routing/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/vincentj93/osm_routing/actions/workflows/atlas.yml/badge.svg)](https://github.com/vincentj93/osm_routing/actions/workflows/atlas.yml)
 
-1. [Getting started](#getting-started)
-    1. [Atlas](#atlas)
-    1. [Mercury](#mercury)
 1. [Building blocks](#building-blocks)
+1. [Getting started](#getting-started)
 1. [ETL Design Principles](#etl-design-principles)
 1. [Project Roadmap](#project-roadmap)
 1. [Contributing](#contributing)
+
+## Building blocks
+
+1. [Atlas](#atlas): Parse **OpenStreetMap (OSM)** data into a _Graph_ of transportation network.
+    1. Tech stack: Python 3.7, Airflow 2.6, PostgreSQL 13 / PostGIS 3.3, osm2pgsql
+1. [Mercury](#mercury): Route planning in the transportation network. Accepts REST API call.
+    1. Tech stack: Rust, Rocket
+1. Phoebe: Microservice layer of Mercury, for path and isochrone rendering
+    1. Tech stack: Python, Django
+1. Dionysus: A simple GUI for visualizing everything
+    1. Tech stack: Typescript, React, Leaflet
+1. Idyia (Planned): ElasticSearch connector for Geocoding
+    1. Tech stack: PostgreSQL, Kafka, kSQL, Debezium, ElasticSearch
 
 ## Getting started
 
@@ -17,16 +28,9 @@
 
 #### Set up Atlas
 
-Prerequisite: Docker
-
+1. Prerequisite: Install Docker
 1. Clone the repo
-1. Under the project folder, run the shell command below (the initialization would take a few minutes)
-
-    ```sh
-    make init
-    make up
-    ```
-
+1. Under the project folder, run `make up` below (the initialization would take a few minutes)
 1. Now the Airflow GUI console is accessible at <http://localhost:8080/>
     1. Airflow user name and password is set by default as `airflow:airflow`, this can be changed in the `docker-compose.yaml`
     1. PostgreSQL database user name and password is set as above, this can be changed in the `atlas/config/commons.json`
@@ -76,20 +80,6 @@ Select the Python interpreter in the bottom-right corner of VSCode window, and v
 
 (Under construction)
 
-## Building blocks
-
-1. Atlas: Parse OSM data into a _Graph_ of transportation network.
-    1. Tech stack: Python 3, Airflow 2.6, PostgreSQL 13 / PostGIS, osm2pgsql
-1. Mercury: Route planning in the transportation network. Accepts REST API call.
-    1. Tech stack: Rust, Rocket
-    1. Reference: Customizable Contraction Hierarchies. Julian Dibbelt, Ben Strasser, and Dorothea Wagner. ACM Journal of Experimental Algorithmics, 2016.
-1. Phoebe: Microservice layer of Mercury, for path and isochrone rendering
-    1. Tech stack: Python, Django
-1. Dionysus: A simple GUI for visualizing everything
-    1. Tech stack: Typescript, React, Leaflet
-1. Idyia (Planned): ElasticSearch connector for Geocoding
-    1. Tech stack: PostgreSQL, Kafka, kSQL, Debezium, ElasticSearch
-
 ## ETL Design Principles
 
 1. Idempotence
@@ -136,3 +126,4 @@ All pull requests are code reviewed and tested by the CI.
 ## Reference
 
 1. [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
+1. [Customizable Contraction Hierarchies.](https://arxiv.org/abs/1402.0402) Julian Dibbelt, Ben Strasser, and Dorothea Wagner. ACM Journal of Experimental Algorithmics, 2016.
