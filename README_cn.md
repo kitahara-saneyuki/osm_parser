@@ -3,11 +3,24 @@
 [![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
 
-ZH | [EN](./README.md)
+中文 | [English](./README.md)
 
-1. [开始工作](#getting-started)
-1. [项目路线图](#project-roadmap)
-1. [如何成为贡献者](#contributing)
+1. [设计目标](#设计目标)
+1. [开始工作](#开始工作)
+1. [项目路线图](#项目路线图)
+1. [如何成为贡献者](#如何成为贡献者)
+
+## 设计目标
+
+一个
+
+- 易于配置的
+- 易于扩展的
+- 易于维护的
+- 易于伸缩的
+- 健壮的
+
+用于 OpenStreetMap 的解析器，为在 OpenStreetMap 道路网络中操纵数据提供最佳体验。
 
 ## 开始工作
 
@@ -49,11 +62,14 @@ make run region=<region>
 
 ### VSCode Python 解释器设置
 
-首先，我们需要通过 `make python37` 安装 Python 3.7（脚本通过了 Debian 12 的测试，如果您使用 Ubuntu ，推荐使用 `sudo add-apt-repository ppa:deadsnakes/ppa` 安装 Python 3.7）。
+首先，我们需要安装 Python 3.7
+- 如果您使用 Debian 12 ，可以使用我们的脚本 `make python37`
+- 如果您使用 Ubuntu ，推荐使用 `sudo add-apt-repository ppa:deadsnakes/ppa` 安装 Python 3.7
 
 然后运行
 
 ```sh
+sudo apt-get install python3.7-distutils libsasl2-dev python3.7-dev libldap2-dev libssl-dev
 python3.7 -m virtualenv -p python3.7 venv
 source venv/bin/activate
 pip install -r atlas/requirements-venv.txt
