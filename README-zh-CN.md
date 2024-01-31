@@ -2,6 +2,7 @@
 
 [![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
+[![Wiki pages](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/docs.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/docs.yml)
 
 中文 | [English](./README.md)
 
