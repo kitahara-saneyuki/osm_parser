@@ -5,10 +5,10 @@
 
 中文 | [English](./README.md)
 
-1. [设计目标](#设计目标)
-1. [开始工作](#开始工作)
-1. [项目路线图](#项目路线图)
-1. [如何成为贡献者](#如何成为贡献者)
+1.  [设计目标](#设计目标)
+1.  [开始工作](#开始工作)
+1.  [项目路线图](#项目路线图)
+1.  [如何成为贡献者](#如何成为贡献者)
 
 ## 设计目标
 
@@ -26,15 +26,15 @@
 
 ### 安装 Atlas
 
-1. 安装 Docker
-1. 下载 repo
-1. 在项目文件夹下运行 `make up`（初始化需要几分钟时间）
-1. 现在可以访问 Airflow GUI 控制台，网址是 <http://localhost:8080/>
-    1. Airflow 用户名和密码默认设置为 `airflow:airflow`，可以在 `docker-compose.yaml` 中更改
-    1. PostgreSQL 数据库用户名和密码设置如上，可在 `atlas/config/commons.json` 中更改
-1. 您可以使用 Airflow REST API 或 CLI 命令来启动任务
-1. 通常，在启动第一个 Airflow 任务之前，您需要通过 `make unpause` 使 Airflow 任务可用。
-1. 要验证 Atlas 代码库的完整性，可以使用 `make test` 来进行验证。
+1.  安装 Docker
+1.  下载 repo
+1.  在项目文件夹下运行 `make up`（初始化需要几分钟时间）
+1.  现在可以访问 Airflow GUI 控制台，网址是 <http://localhost:8080/>
+    1.  Airflow 用户名和密码默认设置为 `airflow:airflow`，可以在 `docker-compose.yaml` 中更改
+    1.  PostgreSQL 数据库用户名和密码设置如上，可在 `atlas/config/commons.json` 中更改
+1.  您可以使用 Airflow REST API 或 CLI 命令来启动任务
+1.  通常，在启动第一个 Airflow 任务之前，您需要通过 `make unpause` 使 Airflow 任务可用。
+1.  要验证 Atlas 代码库的完整性，可以使用 `make test` 来进行验证。
 
 ### 在 Atlas 中添加新区域/交通模式
 
@@ -79,39 +79,39 @@ pip install -r atlas/requirements-venv.txt
 
 ## 项目路线图
 
-1. [x] 自动测试
-1. [ ] 并行处理
+1.  [x] 自动测试
+1.  [ ] 并行处理
 
 ## 如何成为贡献者
 
 我们十分欢迎贡献者！贡献有多种形式。您可以
 
-1. 提交功能请求或错误报告作为 Issue 。
-1. 以 Issue 的形式要求改进文档。
-1. 对需要反馈的 Issue 发表评论
-1. 通过 Pull Request 贡献代码。
+1.  提交功能请求或错误报告作为 Issue 。
+1.  以 Issue 的形式要求改进文档。
+1.  对需要反馈的 Issue 发表评论
+1.  通过 Pull Request 贡献代码。
 
 我们希望把代码质量保持在最高水平。这意味着，您贡献的任何代码都需要
 
-1. 有注释：复杂和非显而易见的功能必须有适当的注释。
-1. 文档：公共项目必须有文档注释，必要的话须附有示例。
-1. 风格：您的代码风格应与现有和上下文代码风格相匹配。
-1. 简洁：您的代码应尽可能简单、习以为常地完成任务。
-1. 经过测试：您需要为任何新功能编写（并通过）令人信服的测试。
-1. 功能专一：您的代码应该完成它应该完成的任务，仅此而已。
+1.  有注释：复杂和非显而易见的功能必须有适当的注释。
+1.  文档：公共项目必须有文档注释，必要的话须附有示例。
+1.  风格：您的代码风格应与现有和上下文代码风格相匹配。
+1.  简洁：您的代码应尽可能简单、习以为常地完成任务。
+1.  经过测试：您需要为任何新功能编写（并通过）令人信服的测试。
+1.  功能专一：您的代码应该完成它应该完成的任务，仅此而已。
 
 所有 Pull Request 都将通过持续集成进行代码审查和测试。
 
 此外，在代码评审中，我们将遵循 ETL 设计原则：
 
-1. 幂等性
-1. 模块性
-1. 原子性
-1. 变化检测和增量
-1. 可伸缩性
-1. 错误检测和数据验证
-1. 可恢复性和可重启性
+1.  幂等性
+1.  模块性
+1.  原子性
+1.  变化检测和增量
+1.  可伸缩性
+1.  错误检测和数据验证
+1.  可恢复性和可重启性
 
 ## Reference
 
-1. [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
+1.  [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
