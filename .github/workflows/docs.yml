@@ -14,7 +14,8 @@ jobs:
           cp README.md Home.md
           cp README-zh-CN.md Home-zh-CN.md
           sed -i 's/.md//g' *.md docs/*/*.md
-          sed -i 's/docs\/*\///g' *.md docs/*/*.md
+          sed -i 's/docs\/en-US\///g' *.md docs/*/*.md
+          sed -i 's/docs\/zh-CN\///g' *.md docs/*/*.md
           sed -i 's/README/Home/g' Home.md Home-zh-CN.md
       - name: Sync with local action
         uses: kai-tub/external-repo-sync-action@v1

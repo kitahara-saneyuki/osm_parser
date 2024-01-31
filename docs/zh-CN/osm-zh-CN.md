@@ -30,9 +30,9 @@ OpenStreetMap （下称 OSM ）[^1]使用折线[^2]这种数据结构储存道�
 - 长度（ distance ）
 
 有向含权图中，节点指向自己的环（如道路在居民区里终点的环路），在寻路中意义较小，而且可能会造成寻路算法的未定义行为。
-因此我们略过它们，在寻路中使用有向无环图（ Directed Acyclic Graph ， DAG ）
+因此我们略过它们，在寻路中使用有向无环图（ Directed Acyclic Graph ， DAG ）。
 
-## OSM路网数据的SQL表示： osm2pgsql
+## OSM 路网数据的 SQL 表示： osm2pgsql
 
 我们使用 osm2pgsql 将 osm 数据剖析为 PostgreSQL （下称 pg ）数据库。
 这个过程较为繁琐，我们略过讨论，有兴趣的请自行翻阅 osm2pgsql 文档[^6] 。
@@ -40,7 +40,7 @@ OpenStreetMap （下称 OSM ）[^1]使用折线[^2]这种数据结构储存道�
 我们从 Geofabrik[^7]下载已经被打包好了的 `.osm.pbf` 文件。
 运行 osm2pgsql 剖析 osm 进入 pg 的是裸数据（ raw data ），我们关心其中的折线（ way ），因为所有的道路（ highway ）均以折线表示。
 
-## OSM道路的拆解
+## OSM 道路的拆解
 
 ### 建模节点和寻路节点
 
