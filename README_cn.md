@@ -1,98 +1,100 @@
-# Atlas: an OpenStreetMap parser
+# Atlas：OpenStreetMap 数据剖析器
 
 [![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
 
-1. [Getting started](#getting-started)
-1. [Project Roadmap](#project-roadmap)
-1. [Contributing](#contributing)
+ZH | [EN](./README.md)
 
-## Getting started
+1. [开始工作](#getting-started)
+1. [项目路线图](#project-roadmap)
+1. [如何成为贡献者](#contributing)
 
-### Set up Atlas
+## 开始工作
 
-1. Prerequisite: Install Docker
-1. Clone the repo
-1. Under the project folder, run `make up` below (the initialization would take a few minutes)
-1. Now the Airflow GUI console is accessible at <http://localhost:8080/>
-    1. Airflow user name and password is set by default as `airflow:airflow`, this can be changed in the `docker-compose.yaml`
-    1. PostgreSQL database user name and password is set as above, this can be changed in the `atlas/config/commons.json`
-1. Also you can use the Airflow REST API or CLI commands to trigger jobs
-1. Usually you will need to unpause the Airflow jobs by `make unpause`, before trigger the first Airflow job
-1. To verify the integrity of Atlas codebase, you can use `make test`
+### 安装 Atlas
 
-### Add new regions / transportation modes in Atlas
+1. 安装 Docker
+1. 下载 repo
+1. 在项目文件夹下运行 `make up`（初始化需要几分钟时间）
+1. 现在可以访问 Airflow GUI 控制台，网址是 <http://localhost:8080/>
+    1. Airflow 用户名和密码默认设置为 `airflow:airflow`，可以在 `docker-compose.yaml` 中更改
+    1. PostgreSQL 数据库用户名和密码设置如上，可在 `atlas/config/commons.json` 中更改
+1. 您可以使用 Airflow REST API 或 CLI 命令来启动任务
+1. 通常，在启动第一个 Airflow 任务之前，您需要通过 `make unpause` 使 Airflow 任务可用。
+1. 要验证 Atlas 代码库的完整性，可以使用 `make test` 来进行验证。
 
-Atlas has two preset regions in the `atlas/config` folder: **Bristol, UK** (used for automated testing) and **Washington, US**.
-Also, two preset transportation modes, **road** and **pedestrian** are provided.
-It's very simple to add your own regions and / or transportation modes in Atlas:
+### 在 Atlas 中添加新区域/交通模式
 
-- Create your own configuration JSON file in the folder `atlas/config/regions` and / or `atlas/config/modes`,
-- Add your own regions / modes in the `atlas/config/commons.json`, field `atlas_region_allowed` or `traffic_mode_allowed`, so the new configuration can be found by the Airflow DAGs.
+Atlas 的 `atlas/config` 文件夹中提供了两个预设区域： **英国布里斯托尔**（用于自动测试）和 **美国华盛顿州** 。
+此外，还提供了两种预设交通模式： **公路** 和 **步行** 。
+在 Atlas 中添加自己的地区和/或交通模式非常简单：
 
-### Trigger Atlas pipeline, and output CSV format
+- 在 `atlas/config/regions` 和/或 `atlas/config/modes` 文件夹中创建自己的配置 JSON 文件、
+- 在 `atlas/config/commons.json` 的 `atlas_region_allowed` 或 `traffic_mode_allowed` 字段中添加您自己的区域/模式，字段为，这样 Airflow DAG 就能找到新配置。
 
-After your region is set up, in the terminal, run
+### 执行 Atlas 任务并输出 CSV 格式
+
+设置完成后，在终端运行
 
 ```sh
 make run region=<region>
 ```
 
-You can also trigger the pipeline through GUI or REST API.
+您也可以通过 GUI 或 REST API 执行任务。
 
-The output can be found at `data/<region>/output` folder, with 3 CSV files:
+输出可在 `data/<region>/output` 文件夹中找到，其中包含 3 个 CSV 文件：
 
-- `node`: 2 columns, latitude / longitude coordinate for each node. The column number is `node_id` (start from 0).
-- `graph`: 3 columns: head -> tail of `node_id`, representing each _arc_ of the _directed acyclic graph_(DAG) for the transportation network, and the `time_cost` (in milliseconds), serving as _weight_ of each arc in the DAG.
-- `max_node_id`: the max `node_id` for nodes.
+- 节点：包含两列数据：每个节点的经纬度坐标。列号为 `node_id` （从 0 开始）。
+- 图：包含三列数据。我们通过有向无环图（DAG）实现交通网络。有向无环图中的每条弧，前两列为其起点和终点的 `node_id`，第三列为其 “时间成本”（单位毫秒），即有向无环图中每条弧的“权重”。
 
-### VSCode Python Interpreter Set up
+### VSCode Python 解释器设置
 
-First we need to install Python 3.7 by `make python37` (the script is tested under Debian 12).
-Then run:
+首先，我们需要通过 `make python37` 安装 Python 3.7（脚本通过了 Debian 12 的测试，如果您使用 Ubuntu ，推荐使用 `sudo add-apt-repository ppa:deadsnakes/ppa` 安装 Python 3.7）。
+
+然后运行
 
 ```sh
 python3.7 -m virtualenv -p python3.7 venv
 source venv/bin/activate
-pip install -r requirements-venv.txt
+pip install -r atlas/requirements-venv.txt
 ```
 
-Select the Python interpreter in the bottom-right corner of VSCode window, and voila.
+点击 VSCode 窗口右下角的 Python 解释器，选择 `venv/bin/python3.7` 即可。
 
-## Project Roadmap
+## 项目路线图
 
-1. [x] Automated testing
-1. [ ] Parallel processing
+1. [x] 自动测试
+1. [ ] 并行处理
 
-## Contributing
+## 如何成为贡献者
 
-Contributions are absolutely, positively welcome and encouraged! Contributions come in many forms. You could:
+我们十分欢迎贡献者！贡献有多种形式。您可以
 
-1. Submit a feature request or bug report as an issue.
-1. Ask for improved documentation as an issue.
-1. Comment on issues that require feedback.
-1. Contribute code via pull requests.
+1. 提交功能请求或错误报告作为 Issue 。
+1. 以 Issue 的形式要求改进文档。
+1. 对需要反馈的 Issue 发表评论
+1. 通过 Pull Request 贡献代码。
 
-We aim to keep code quality at the highest level. This means that any code you contribute must be:
+我们希望把代码质量保持在最高水平。这意味着，您贡献的任何代码都需要
 
-1. Commented: Complex and non-obvious functionality must be properly commented.
-1. Documented: Public items must have doc comments with examples, if applicable.
-1. Styled: Your code's style should match the existing and surrounding code style.
-1. Simple: Your code should accomplish its task as simply and idiomatically as possible.
-1. Tested: You must write (and pass) convincing tests for any new functionality.
-1. Focused: Your code should do what it's supposed to and nothing more.
+1. 有注释：复杂和非显而易见的功能必须有适当的注释。
+1. 文档：公共项目必须有文档注释，必要的话须附有示例。
+1. 风格：您的代码风格应与现有和上下文代码风格相匹配。
+1. 简洁：您的代码应尽可能简单、习以为常地完成任务。
+1. 经过测试：您需要为任何新功能编写（并通过）令人信服的测试。
+1. 功能专一：您的代码应该完成它应该完成的任务，仅此而已。
 
-All pull requests are code reviewed and tested by the CI.
+所有 Pull Request 都将通过持续集成进行代码审查和测试。
 
-Also, during code review, we will follow the ETL design principles:
+此外，在代码评审中，我们将遵循 ETL 设计原则：
 
-1. Idempotence
-1. Modularity
-1. Atomicity
-1. Change Detection and Increment
-1. Scalability
-1. Error Detection and Data Validation
-1. Recovery and Restartability
+1. 幂等性
+1. 模块性
+1. 原子性
+1. 变化检测和增量
+1. 可伸缩性
+1. 错误检测和数据验证
+1. 可恢复性和可重启性
 
 ## Reference
 
