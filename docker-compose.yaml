@@ -88,7 +88,7 @@ x-airflow-common:
 
 services:
   postgres:
-    image: postgis/postgis:13-3.3
+    image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

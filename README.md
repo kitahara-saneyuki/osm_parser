@@ -1,32 +1,15 @@
-# OSM Routing Engine
+# Atlas: an OpenStreetMap parser
 
-[![Lint check](https://github.com/kitahara-saneyuki/osm_routing/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_routing/actions/workflows/lint.yml)
-[![Atlas tests](https://github.com/kitahara-saneyuki/osm_routing/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_routing/actions/workflows/atlas.yml)
+[![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
+[![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
 
-1. [Building blocks](#building-blocks)
 1. [Getting started](#getting-started)
-1. [ETL Design Principles](#etl-design-principles)
 1. [Project Roadmap](#project-roadmap)
 1. [Contributing](#contributing)
 
-## Building blocks
-
-1. [Atlas](#atlas): Parse **OpenStreetMap (OSM)** data into a _Graph_ of transportation network.
-    1. Tech stack: Python 3.7, Airflow 2.6, PostgreSQL 13 / PostGIS 3.3, osm2pgsql
-1. [Mercury](#mercury): Route planning in the transportation network. Accepts REST API call.
-    1. Tech stack: Rust, Rocket
-1. Phoebe: Microservice layer of Mercury, for path and isochrone rendering
-    1. Tech stack: Python, Django
-1. Dionysus: A simple GUI for visualizing everything
-    1. Tech stack: Typescript, React, Leaflet
-1. Idyia (Planned): ElasticSearch connector for Geocoding
-    1. Tech stack: PostgreSQL, Kafka, kSQL, Debezium, ElasticSearch
-
 ## Getting started
 
-### Atlas
-
-#### Set up Atlas
+### Set up Atlas
 
 1. Prerequisite: Install Docker
 1. Clone the repo
@@ -38,7 +21,7 @@
 1. Usually you will need to unpause the Airflow jobs by `make unpause`, before trigger the first Airflow job
 1. To verify the integrity of Atlas codebase, you can use `make test`
 
-#### Add new regions / transportation modes in Atlas
+### Add new regions / transportation modes in Atlas
 
 Atlas has two preset regions in the `atlas/config` folder: **Bristol, UK** (used for automated testing) and **Washington, US**.
 Also, two preset transportation modes, **road** and **pedestrian** are provided.
@@ -47,7 +30,7 @@ It's very simple to add your own regions and / or transportation modes in Atlas:
 - Create your own configuration JSON file in the folder `atlas/config/regions` and / or `atlas/config/modes`,
 - Add your own regions / modes in the `atlas/config/commons.json`, field `atlas_region_allowed` or `traffic_mode_allowed`, so the new configuration can be found by the Airflow DAGs.
 
-#### Trigger Atlas pipeline, and output CSV format
+### Trigger Atlas pipeline, and output CSV format
 
 After your region is set up, in the terminal, run
 
@@ -63,7 +46,7 @@ The output can be found at `data/<region>/output` folder, with 3 CSV files:
 - `graph`: 3 columns: head -> tail of `node_id`, representing each _arc_ of the _directed acyclic graph_(DAG) for the transportation network, and the `time_cost` (in milliseconds), serving as _weight_ of each arc in the DAG.
 - `max_node_id`: the max `node_id` for nodes.
 
-#### VSCode Python Interpreter Set up
+### VSCode Python Interpreter Set up
 
 First we need to install Python 3.7 by `make python37` (the script is tested under Debian 12).
 Then run:
@@ -76,32 +59,10 @@ pip install -r requirements-venv.txt
 
 Select the Python interpreter in the bottom-right corner of VSCode window, and voila.
 
-### Mercury
-
-(Under construction)
-
-## ETL Design Principles
-
-1. Idempotence
-1. Modularity
-1. Atomicity
-1. Change Detection and Increment
-1. Scalability
-1. Error Detection and Data Validation
-1. Recovery and Restartability
-
 ## Project Roadmap
 
-1. [ ] CCH Algorithm API
-    1. [ ] 1-1 routing
-    1. [ ] Path rendering
-    1. [ ] Matrix routing
-    1. [ ] Isochrone rendering
-    1. [ ] SIMD computing
-1. [ ] Visualized routing
-1. [ ] Helm Chart
-1. [ ] Incremental processing
 1. [x] Automated testing
+1. [ ] Parallel processing
 
 ## Contributing
 
@@ -123,7 +84,16 @@ We aim to keep code quality at the highest level. This means that any code you c
 
 All pull requests are code reviewed and tested by the CI.
 
+Also, during code review, we will follow the ETL design principles:
+
+1. Idempotence
+1. Modularity
+1. Atomicity
+1. Change Detection and Increment
+1. Scalability
+1. Error Detection and Data Validation
+1. Recovery and Restartability
+
 ## Reference
 
 1. [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
-1. [Customizable Contraction Hierarchies.](https://arxiv.org/abs/1402.0402) Julian Dibbelt, Ben Strasser, and Dorothea Wagner. ACM Journal of Experimental Algorithmics, 2016.
