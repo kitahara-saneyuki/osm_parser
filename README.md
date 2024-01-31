@@ -3,11 +3,24 @@
 [![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
 
-[ZH](./README_cn.md) | EN
+[中文](./README_cn.md) | English
 
+1. [Project Goals](#project-goals)
 1. [Getting started](#getting-started)
 1. [Project Roadmap](#project-roadmap)
 1. [Contributing](#contributing)
+
+## Design Goals
+
+An
+
+- easily configurable
+- easily extendable
+- easily maintainable
+- easily scalable
+- robust
+
+parser for OpenStreetMap, for the best experience in data manipulating in OpenStreetMap road network.
 
 ## Getting started
 
@@ -49,11 +62,14 @@ The output can be found at `data/<region>/output` folder, with 3 CSV files:
 
 ### VSCode Python Interpreter Set up
 
-First we need to install Python 3.7 by `make python37` (the script is tested under Debian 12. For Ubuntu users, it's recommended to use `sudo add-apt-repository ppa:deadsnakes/ppa` for Python 3.7).
+First we need to install Python 3.7:
+- For Debian 12 users, you can use our script `make python37`
+- For Ubuntu users, it's recommended to use `sudo add-apt-repository ppa:deadsnakes/ppa`
 
 Then run:
 
 ```sh
+sudo apt-get install python3.7-distutils libsasl2-dev python3.7-dev libldap2-dev libssl-dev
 python3.7 -m virtualenv -p python3.7 venv
 source venv/bin/activate
 pip install -r requirements-venv.txt
