@@ -1,4 +1,5 @@
-name: docs
+name: Wiki pages
+
 on: push
 
 jobs:
