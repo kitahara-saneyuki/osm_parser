@@ -1,6 +1,6 @@
 # OpenStreetMap Parsing
 
-[中文](./docs/zh-CN/osm-zh-CN.md) | English
+[中文](./docs/zh-CN/OSM-zh-CN.md) | English
 
 OpenStreetMap (hereafter OSM)[^1] uses a data structure, the so-called `way` [^2] to store road traffic networks.
 What we are concerned:
@@ -21,26 +21,86 @@ Since this is not about routing algorithms (e.g., dijkstra), we can skip the dis
 Transportation network, as the necessity of weights and oneways (like almost all the freeway and overpass ramps), are represented as a **weighted directed graph**.
 
 A weighted directed graph $G = (V, E)$ contains two main elements, namely
-- Nodes ($V$, vertices), intersections of roads.
-- Edges ($E$, also labeled as arcs $A$), i.e., roads.
+- nodes ($V$, vertices), intersections of roads.
+- edges ($E$, also labeled as arcs $A$), i.e., roads.
 
 Each road segment has its own weight, depending on the requirements:
 - speed
 - time cost of travel
-- Length (distance)
+- length (distance)
 
-In a weighted directed graph, nodes pointing to their own rings (e.g., a ring of roads ending in a residential area) have less significance in routing and may cause undefined behavior of the routing algorithm.
-Therefore we omit them and use Directed Acyclic Graph (DAG) in routing.
+In a weighted directed graph, nodes pointing to their own rings (e.g., a ring road in a residential area) are less important in routing and may cause undefined behavior of the routing algorithm.
+Therefore we ignore them and use Directed Acyclic Graph (DAG) in routing.
 
-## osm2pgsql
+## Osm2pgsql
 
 We use osm2pgsql to parse the OSM data into a PostgreSQL database.
 This is a tedious process, so we skip the discussion and refer to the osm2pgsql documentation[^6] for those interested.
 
-We download the packaged `.osm.pbf` map file from Geofabrik[^7].
+We download the packaged `.OSM.pbf` map file from Geofabrik[^7].
 Running osm2pgsql to parse OSM into PostgreSQL as raw data. What we cared about are the ways, as all the roads (highways) are served as ways.
 
+## OSM way to edges
 
+### Modeling nodes and Routing nodes
+
+For ease of data storage, OSM road network is not a mathematical graph .
+It is possible for OSM highways to cross intersections (a.k.a. nodes), so we need to cut OSM highways into edges, according to the road intersections (which are labeled as routing nodes in the SQL code).
+On other hands, modeling nodes are the geometrical shape of the road.
+
+Nodes are relatively simple data structures. We need to determine the required accuracy of coordinates based on our needs.
+
+We assume earth as a perfect sphere (actually ellipsoid). As the radius of the earth is $6371km$, so its circumference, i.e., the length of longitude line, is about $6371km \times 2 \times \pi = 40009km$, divided by 360 degrees of latitude on the longitude line, we have the length of one degree is about 110km by napkin math.
+The human walking scale is about 0.1m order of magnitude, which is sufficient for routing use, so it is easy to get that the accuracy of 6 decimal places can satisfy the demand ($10^{-6} \times 110km = 0.1m$).
+
+### Determining the Routing nodes
+
+Routing nodes are nodes in a mathematical graph.
+Roads are one-way arcs in a weighted directed graph, inscribed spatial relationships between nodes.
+On other hands, nodes also described the spatial relationships between roads, and together they construct the road traffic network as a weighted directed graph.
+
+It is complicated to determine the routing nodes. To reduce computation, we treat them case-by-case.
+
+It is trivial that the two ends of each highway, the starting point and the ending point, must be the routing nodes.
+
+The subsequent computation is not considered by the author to be optimal and only represents a feasible solution.
+We use a relatively quick SQL calculation [^8] to disassemble all the road modeling nodes into a single column, and then use an aggregation calculation to select the modeling nodes that have appeared simultaneously in __more than one road__.
+Since a modeling node appears in more than one road, it must be an intersection, i.e., a routing nodes.
+
+### Splitting and length calculation of roads
+
+This is a cumbersome calculation, and I have not found a solution that is feasible using SQL scripts alone, so readers are encouraged to explore on their own.
+
+I used python script to do the violent disassembly, i.e., for each OSM fold (way), loop through it one by one from the starting point, and if it encounters a path-finding node, it is considered as a separate road, i.e., an edge on the graph.
+
+A number of modeling nodes concatenated into a single fold define the geometry of the road.
+We can compute the distance on the sphere between any two points on the earth, i.e., the distance between two neighboring modeling nodes, as the length of the fold line by using the semipositive vector Haversine formula.
+The length of a road is obtained by concatenating each polyline on the road and calculating the sum of the polyline lengths on the road.
+
+## Performance optimization for pg data processing
+
+PostgreSQL provides an extremely extensive variety of types of indexes [^9], and we need to focus on roughly two of them, their optimization of retrieval performance for different application scenarios in this application, and the principles that enable successful optimization.
+
+SQL databases are at the center of Internet software, and most of the development process of Internet applications revolves around optimizing the performance of database retrieval in both time (performance, i.e., retrieval speed) and space (scalability, i.e., scalability) dimensions, as well as the use of NoSQL databases to handle retrievals that cannot be optimized with traditional SQL databases. The development of NoSQL.
+The simplest (yet most complex) use case is 12306.
+
+### B+ Tree Indexes and Their Applications
+
+The B+ tree is the most widely used index type in pg, and supports a variety of comparison operations.
+This article will not go into the principles of B+ tree[^11], this part of the knowledge is left to the reader to explore on their own, generally the basis of undergraduate database courses.
+
+The main application of B+ tree in this data processing project is high-speed sparse search, such as this part of the code [^10], after testing, the use of B+ tree will be about 5 times faster than the use of hash index.
+The secret lies in the bitmap index scan[^12], which speeds up the collection computation[^14] dramatically by using bitmap operations[^13] optimized at the x86 CPU instruction set level.
+
+### GiST indexing and its applications
+
+The principle of GiST indexing is not repeated here, but in this application, its greatest use is to retrieve the closest point or points in spatial proximity to a given point as quickly as possible.
+
+The choice of an index specialized for latitude and longitude reflects the basic principles of software development: __ Choose the right data structure for the application, and optimize it for what we need, performance, scalability, etc., based on the characteristics of the data structure itself. __
+For specific practices, see an older, but still well-respected collection of essays on software development, Programming Pearls [^15].
+
+In addition to B+ tree indexes and GiST indexes, hash indexes and gin indexes are also frequently used indexes.
+In addition, hstore is also a frequently used data structure.
 
 [^1]: https://wiki.openstreetmap.org/wiki/About_OpenStreetMap
 [^2]: https://wiki.openstreetmap.org/wiki/Way
@@ -49,9 +109,9 @@ Running osm2pgsql to parse OSM into PostgreSQL as raw data. What we cared about 
 [^5]: https://wiki.openstreetmap.org/wiki/Key:highway
 [^6]: https://osm2pgsql.org/doc/manual.html
 [^7]: https://download.geofabrik.de/north-america.html
-[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/sql/03_parse_osm/04_routing_nodes.sql
+[^8]: https://github.com/kitahara-saneyuki/OSM_parser/blob/main/atlas/dags/sql/03_parse_OSM/04_routing_nodes.sql
 [^9]: https://www.postgresql.org/docs/current/indexes-types.html
-[^10]: https://github.com/kitahara-saneyuki/osm_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/03_parse_osm.py#L21-L32
+[^10]: https://github.com/kitahara-saneyuki/OSM_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/03_parse_OSM.py#L21-L32
 [^11]: https://cloud.tencent.com/developer/article/1734536
 [^12]: https://www.dounaite.com/article/6254ffb57cc4ff68e6473f3f.html
 [^13]: https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set
