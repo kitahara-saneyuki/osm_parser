@@ -112,8 +112,8 @@ B+ 树在本数据处理项目中的主要应用在于高速的稀疏检索，�
 [^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/sql/03_parse_osm/04_routing_nodes.sql
 [^9]: https://developer.aliyun.com/article/111793
 [^10]: https://github.com/kitahara-saneyuki/osm_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/03_parse_osm.py#L21-L32
-[^11]: https://www.geeksforgeeks.org/introduction-of-b-tree/
-[^12]: https://www.percona.com/blog/one-index-three-different-postgresql-scan-types-bitmap-index-and-index-only/
+[^11]: https://cloud.tencent.com/developer/article/1734536
+[^12]: https://www.dounaite.com/article/6254ffb57cc4ff68e6473f3f.html
 [^13]: https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set
-[^14]: https://www.geeksforgeeks.org/sets-in-python/
+[^14]: https://zhuanlan.zhihu.com/p/100603507
 [^15]: https://awesome-programming-books.github.io/algorithms/%E7%BC%96%E7%A8%8B%E7%8F%A0%E7%8E%91%EF%BC%88%E7%AC%AC2%E7%89%88%EF%BC%89.pdf
