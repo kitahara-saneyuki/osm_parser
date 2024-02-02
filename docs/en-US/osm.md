@@ -69,12 +69,12 @@ It is not considered optimal by the author, just a feasible solution.
 
 ### Splitting ways and length calculation
 
-This is a cumbersome calculation, and I have not found a solution that is feasible using SQL scripts alone. Readers are encouraged to explore on their own solutions.
+This is a cumbersome calculation, and I have yet found a solution that is feasible using SQL scripts alone. Readers are encouraged to explore on their own solutions.
 
-I used python script to do the violent spliting, i.e., for each OSM way, loop through it one by one from the starting point, and if it encounters a routing node, it is considered as a separate road, i.e., an edge (arc) on the weighted directed graph.
+Python scripts are used here for the heavy-lifting. For each OSM way, loop through it one by one from the starting point, and if encountered a routing node, we consider it as a separate road, i.e., an edge (arc) on the weighted directed graph.
 
-Modeling nodes define the geometrical shape of ways.
-We can compute the distance on the earth between any two points on the earth, i.e., the distance between two neighboring modeling nodes, as the length of the highway by the Haversine formula.
+Modeling nodes determine the geometrical shape of ways.
+We can calculate the distances between neighboring modeling nodes on the earth by the Haversine formula.
 Summing the length of each segment on the way, we got the length of way.
 
 ## Performance optimization for PostgreSQL
@@ -83,7 +83,7 @@ PostgreSQL provides an extensive variety of types of indexes [^9], and we need t
 
 SQL databases are the center of Internet applications, and optimizing the performance of database query in both time (query performance) and space (scalability) dimensions are most of our development.
 NoSQL databases can handle the applications that cannot be optimized with traditional SQL databases. 
-The simplest (yet most complex) use case is 12306.
+The simplest (yet most complex) use case is Amazon.
 
 ### B+ tree index and its applications
 
