@@ -247,10 +247,10 @@ with DAG(
             """,
     )
 
-    modeling_nodes = PostgresOperator(
-        task_id="03_modeling_nodes",
+    modelling_nodes = PostgresOperator(
+        task_id="03_modelling_nodes",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/03_modeling_nodes.sql",
+        sql="sql/03_parse_osm/03_modelling_nodes.sql",
     )
 
     routing_nodes = PostgresOperator(
@@ -280,7 +280,7 @@ with DAG(
     (
         clean_all_roads
         >> select_roads
-        >> modeling_nodes
+        >> modelling_nodes
         >> routing_nodes
         >> new_edge_table
         >> cut_roads()
