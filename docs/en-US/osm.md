@@ -55,27 +55,27 @@ The human walking scale is about 0.1m order of magnitude, which is sufficient fo
 
 ### Determining the Routing nodes
 
-Routing nodes are nodes in a mathematical graph.
-Roads are one-way arcs in a weighted directed graph, inscribed spatial relationships between nodes.
-On other hands, nodes also described the spatial relationships between roads, and together they construct the road traffic network as a weighted directed graph.
+Routing nodes are *nodes* in a mathematical *weighted directed graph* of road traffic network.
+Roads are one-way arcs in a weighted directed graph, inscribing spatial relationships between nodes.
 
-It is complicated to determine the routing nodes. To reduce computation, we treat them case-by-case.
+It is complicated to determine the routing nodes. To manage the complexity, we treat them case-by-case.
 
 It is trivial that the two ends of each highway, the starting point and the ending point, must be the routing nodes.
 
-The subsequent computation is not considered by the author to be optimal and only represents a feasible solution.
-We use a relatively quick SQL calculation [^8] to disassemble all the road modeling nodes into a single column, and then use an aggregation calculation to select the modeling nodes that have appeared simultaneously in __more than one road__.
-Since a modeling node appears in more than one road, it must be an intersection, i.e., a routing nodes.
+We use a relatively quick SQL calculation [^8] to put all the modeling nodes of all roads into a single column, and then use an aggregation calculation to select the modeling nodes that have appeared simultaneously in __more than one road__.
+If a modeling node appears in more than one road, it must be an intersection, i.e., a routing nodes.
 
-### Splitting and length calculation of roads
+It is not considered optimal by the author, just a feasible solution.
 
-This is a cumbersome calculation, and I have not found a solution that is feasible using SQL scripts alone, so readers are encouraged to explore on their own.
+### Splitting ways and length calculation
 
-I used python script to do the violent disassembly, i.e., for each OSM fold (way), loop through it one by one from the starting point, and if it encounters a path-finding node, it is considered as a separate road, i.e., an edge on the graph.
+This is a cumbersome calculation, and I have not found a solution that is feasible using SQL scripts alone. Readers are encouraged to explore on their own solutions.
 
-A number of modeling nodes concatenated into a single fold define the geometry of the road.
-We can compute the distance on the sphere between any two points on the earth, i.e., the distance between two neighboring modeling nodes, as the length of the fold line by using the semipositive vector Haversine formula.
-The length of a road is obtained by concatenating each polyline on the road and calculating the sum of the polyline lengths on the road.
+I used python script to do the violent spliting, i.e., for each OSM way, loop through it one by one from the starting point, and if it encounters a routing node, it is considered as a separate road, i.e., an edge (arc) on the weighted directed graph.
+
+Modeling nodes define the geometrical shape of ways.
+We can compute the distance on the earth between any two points on the earth, i.e., the distance between two neighboring modeling nodes, as the length of the highway by the Haversine formula.
+Summing the length of each segment on the way, we got the length of way.
 
 ## Performance optimization for pg data processing
 
@@ -109,7 +109,7 @@ In addition, hstore is also a frequently used data structure.
 [^5]: https://wiki.openstreetmap.org/wiki/Key:highway
 [^6]: https://osm2pgsql.org/doc/manual.html
 [^7]: https://download.geofabrik.de/north-america.html
-[^8]: https://github.com/kitahara-saneyuki/OSM_parser/blob/main/atlas/dags/sql/03_parse_OSM/04_routing_nodes.sql
+[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/sql/03_parse_osm/04_routing_nodes.sql#L15-L18
 [^9]: https://www.postgresql.org/docs/current/indexes-types.html
 [^10]: https://github.com/kitahara-saneyuki/OSM_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/03_parse_OSM.py#L21-L32
 [^11]: https://cloud.tencent.com/developer/article/1734536
