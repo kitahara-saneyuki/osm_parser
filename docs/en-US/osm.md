@@ -77,29 +77,28 @@ Modeling nodes define the geometrical shape of ways.
 We can compute the distance on the earth between any two points on the earth, i.e., the distance between two neighboring modeling nodes, as the length of the highway by the Haversine formula.
 Summing the length of each segment on the way, we got the length of way.
 
-## Performance optimization for pg data processing
+## Performance optimization for PostgreSQL
 
-PostgreSQL provides an extremely extensive variety of types of indexes [^9], and we need to focus on roughly two of them, their optimization of retrieval performance for different application scenarios in this application, and the principles that enable successful optimization.
+PostgreSQL provides an extensive variety of types of indexes [^9], and we need to focus on two of them, their optimization of query performance on different scenarios in this application, and their underlying data structure.
 
-SQL databases are at the center of Internet software, and most of the development process of Internet applications revolves around optimizing the performance of database retrieval in both time (performance, i.e., retrieval speed) and space (scalability, i.e., scalability) dimensions, as well as the use of NoSQL databases to handle retrievals that cannot be optimized with traditional SQL databases. The development of NoSQL.
+SQL databases are the center of Internet applications, and optimizing the performance of database query in both time (query performance) and space (scalability) dimensions are most of our development.
+NoSQL databases can handle the applications that cannot be optimized with traditional SQL databases. 
 The simplest (yet most complex) use case is 12306.
 
-### B+ Tree Indexes and Their Applications
+### B+ tree index and its applications
 
-The B+ tree is the most widely used index type in pg, and supports a variety of comparison operations.
-This article will not go into the principles of B+ tree[^11], this part of the knowledge is left to the reader to explore on their own, generally the basis of undergraduate database courses.
+The B+ tree[^11] is the most widely used index type in PostgreSQL, and supports a variety of comparison operations.
+B+ tree in this project is mostly for high-performance sparse data query, such as this part of the code [^10], after testing, it is about 5 times faster than hash index.
+Bitmap index scan[^12] speeds up the set operations[^14] dramatically by using instructions[^13] optimized in the x86 CPUs.
 
-The main application of B+ tree in this data processing project is high-speed sparse search, such as this part of the code [^10], after testing, the use of B+ tree will be about 5 times faster than the use of hash index.
-The secret lies in the bitmap index scan[^12], which speeds up the collection computation[^14] dramatically by using bitmap operations[^13] optimized at the x86 CPU instruction set level.
+### GiST index and its applications
 
-### GiST indexing and its applications
+GiST indexes dramatically optimized the operations of querying the closest point or points in spatial proximity to a given point.
 
-The principle of GiST indexing is not repeated here, but in this application, its greatest use is to retrieve the closest point or points in spatial proximity to a given point as quickly as possible.
+Selecting index specialized for coordinates reflects the basic principles of software development: __Select a right data structure for the application, and optimize it for what we need, performance, scalability, etc., based on the characteristics of the data itself.__
+For specific practices, see a time-tested collection of essays on software development, Programming Pearls [^15].
 
-The choice of an index specialized for latitude and longitude reflects the basic principles of software development: __ Choose the right data structure for the application, and optimize it for what we need, performance, scalability, etc., based on the characteristics of the data structure itself. __
-For specific practices, see an older, but still well-respected collection of essays on software development, Programming Pearls [^15].
-
-In addition to B+ tree indexes and GiST indexes, hash indexes and gin indexes are also frequently used indexes.
+In addition to B+ tree indexes and GiST indexes, Hash indexes and GIN indexes are also frequently used.
 In addition, hstore is also a frequently used data structure.
 
 [^1]: https://wiki.openstreetmap.org/wiki/About_OpenStreetMap
