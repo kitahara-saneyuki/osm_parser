@@ -2,13 +2,14 @@
 
 [![Lint check](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/lint.yml)
 [![Atlas tests](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/atlas.yml)
+[![Wiki pages](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/docs.yml/badge.svg)](https://github.com/kitahara-saneyuki/osm_parser/actions/workflows/docs.yml)
 
-[中文](./README_cn.md) | English
+[中文](./README-zh-CN.md) | English
 
-1. [Project Goals](#project-goals)
-1. [Getting started](#getting-started)
-1. [Project Roadmap](#project-roadmap)
-1. [Contributing](#contributing)
+1.  [Project Goals](#project-goals)
+1.  [Getting started](#getting-started)
+1.  [Project Roadmap](#project-roadmap)
+1.  [Contributing](#contributing)
 
 ## Design Goals
 
@@ -26,15 +27,15 @@ parser for OpenStreetMap, for the best experience in data manipulating in OpenSt
 
 ### Set up Atlas
 
-1. Prerequisite: Install Docker
-1. Clone the repo
-1. Under the project folder, run `make up` (the initialization would take a few minutes)
-1. Now the Airflow GUI console is accessible at <http://localhost:8080/>
-    1. Airflow user name and password is set by default as `airflow:airflow`, this can be changed in the `docker-compose.yaml`
-    1. PostgreSQL database user name and password is set as above, this can be changed in the `atlas/config/commons.json`
-1. Also you can use the Airflow REST API or CLI commands to trigger jobs
-1. Usually you will need to make the Airflow jobs available by `make unpause`, before trigger the first Airflow job
-1. To verify the integrity of Atlas codebase, you can use `make test`
+1.  Prerequisite: Install Docker
+1.  Clone the repo
+1.  Under the project folder, run `make up` (the initialization would take a few minutes)
+1.  Now the Airflow GUI console is accessible at <http://localhost:8080/>
+    1.  Airflow user name and password is set by default as `airflow:airflow`, this can be changed in the `docker-compose.yaml`
+    1.  PostgreSQL database user name and password is set as above, this can be changed in the `atlas/config/commons.json`
+1.  Also you can use the Airflow REST API or CLI commands to trigger jobs
+1.  Usually you will need to make the Airflow jobs available by `make unpause`, before trigger the first Airflow job
+1.  To verify the integrity of Atlas codebase, you can use `make test`
 
 ### Add new regions / transportation modes in Atlas
 
@@ -79,39 +80,39 @@ Select `venv/bin/python3.7` as the Python interpreter in the bottom-right corner
 
 ## Project Roadmap
 
-1. [x] Automated testing
-1. [ ] Parallel processing
+1.  [x] Automated testing
+1.  [ ] Parallel processing
 
 ## Contributing
 
 Contributions are absolutely, positively welcome and encouraged! Contributions come in many forms. You could:
 
-1. Submit a feature request or bug report as an issue.
-1. Ask for improved documentation as an issue.
-1. Comment on issues that require feedback.
-1. Contribute code via pull requests.
+1.  Submit a feature request or bug report as an issue.
+1.  Ask for improved documentation as an issue.
+1.  Comment on issues that require feedback.
+1.  Contribute code via pull requests.
 
 We aim to keep code quality at the highest level. This means that any code you contribute must be:
 
-1. Commented: Complex and non-obvious functionality must be properly commented.
-1. Documented: Public items must have doc comments with examples, if applicable.
-1. Styled: Your code's style should match the existing and surrounding code style.
-1. Simple: Your code should accomplish its task as simply and idiomatically as possible.
-1. Tested: You must write (and pass) convincing tests for any new functionality.
-1. Focused: Your code should do what it's supposed to and nothing more.
+1.  Commented: Complex and non-obvious functionality must be properly commented.
+1.  Documented: Public items must have doc comments with examples, if applicable.
+1.  Styled: Your code's style should match the existing and surrounding code style.
+1.  Simple: Your code should accomplish its task as simply and idiomatically as possible.
+1.  Tested: You must write (and pass) convincing tests for any new functionality.
+1.  Focused: Your code should do what it's supposed to and nothing more.
 
 All pull requests are code reviewed and tested by the CI.
 
 Also, during code review, we will follow the ETL design principles:
 
-1. Idempotence
-1. Modularity
-1. Atomicity
-1. Change Detection and Increment
-1. Scalability
-1. Error Detection and Data Validation
-1. Recovery and Restartability
+1.  Idempotence
+1.  Modularity
+1.  Atomicity
+1.  Change Detection and Increment
+1.  Scalability
+1.  Error Detection and Data Validation
+1.  Recovery and Restartability
 
 ## Reference
 
-1. [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
+1.  [14 Rules To Succeed With Your ETL Project](https://refinepro.com/blog/14-rules-for-successful-ETL/)
