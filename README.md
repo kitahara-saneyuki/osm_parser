@@ -72,7 +72,7 @@ Then run:
 sudo apt-get install python3.8-distutils libsasl2-dev python3.8-dev libldap2-dev libssl-dev
 python3.8 -m virtualenv -p python3.8 venv
 source venv/bin/activate
-pip install -r requirements-venv.txt
+pip install -r atlas/requirements-venv.txt
 ```
 
 Select `venv/bin/python3.8` as the Python interpreter in the bottom-right corner of VSCode window, and voila.
