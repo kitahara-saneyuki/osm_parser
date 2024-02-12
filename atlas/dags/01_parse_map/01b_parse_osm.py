@@ -160,7 +160,7 @@ def import_edges():
     )
     regional_conn = regional_cfg["db_conn"]
     run_shell_command(
-        "dags/sql/03_parse_osm/07_import_edges.sh {db_pgpass} data/{atlas_region}/temp \
+        "dags/01_parse_map/sql/01b_parse_osm/07_import_edges.sh {db_pgpass} data/{atlas_region}/temp \
             {host} {user} {schema}".format(
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
             atlas_region=atlas_region,
@@ -193,7 +193,7 @@ def trigger_downstream():
 
 
 with DAG(
-    "03_parse_osm",
+    "01b_parse_osm",
     default_args={
         "depends_on_past": False,
         "email": ["airflow@example.com"],
@@ -223,7 +223,7 @@ with DAG(
     clean_all_roads = PostgresOperator(
         task_id="01_clean_all_roads",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/01_clean_all_roads.sql",
+        sql="sql/01b_parse_osm/01_clean_all_roads.sql",
     )
 
     select_roads = PostgresOperator(
@@ -251,25 +251,25 @@ with DAG(
     modeling_nodes = PostgresOperator(
         task_id="03_modeling_nodes",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/03_modeling_nodes.sql",
+        sql="sql/01b_parse_osm/03_modeling_nodes.sql",
     )
 
     routing_nodes = PostgresOperator(
         task_id="04_routing_nodes",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/04_routing_nodes.sql",
+        sql="sql/01b_parse_osm/04_routing_nodes.sql",
     )
 
     new_edge_table = PostgresOperator(
         task_id="05_new_edge_table",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/05_new_edge_table.sql",
+        sql="sql/01b_parse_osm/05_new_edge_table.sql",
     )
 
     post_processing = PostgresOperator(
         task_id="08_post_processing",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/03_parse_osm/08_post_processing.sql",
+        sql="sql/01b_parse_osm/08_post_processing.sql",
     )
 
     assign_maxspeed = PostgresOperator(

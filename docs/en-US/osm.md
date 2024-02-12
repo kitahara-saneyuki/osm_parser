@@ -108,7 +108,7 @@ In addition, hstore is also a frequently used data structure.
 [^5]: https://wiki.openstreetmap.org/wiki/Key:highway
 [^6]: https://osm2pgsql.org/doc/manual.html
 [^7]: https://download.geofabrik.de/north-america.html
-[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/sql/03_parse_osm/04_routing_nodes.sql#L15-L18
+[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/01_parse_map/sql/01b_parse_osm/04_routing_nodes.sql#L15-L18
 [^9]: https://www.postgresql.org/docs/current/indexes-types.html
 [^10]: https://github.com/kitahara-saneyuki/OSM_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/03_parse_OSM.py#L21-L32
 [^11]: https://www.geeksforgeeks.org/introduction-of-b-tree/

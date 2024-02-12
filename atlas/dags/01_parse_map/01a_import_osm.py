@@ -76,7 +76,7 @@ def create_db():
     regional_conn = regional_cfg["db_conn"]
     default_conn = Variable.get(key="conn_default", deserialize_json=True)["db_conn"]
     run_shell_command(
-        "dags/sql/01_import_osm/01_create_db.sh {default_pgpass} {db_pgpass} {user} {password} {schema} \
+        "dags/01_parse_map/sql/01a_import_osm/01_create_db.sh {default_pgpass} {db_pgpass} {user} {password} {schema} \
                       {default_host} {default_user} {default_schema} {atlas_region}".format(
             default_pgpass="config/default.pgpass",
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
@@ -117,7 +117,7 @@ def osm2pgsql():
     )
     regional_conn = regional_cfg["db_conn"]
     run_shell_command(
-        "dags/sql/01_import_osm/03_osm2pgsql.sh {db_pgpass} {pbf_path}{filename} \
+        "dags/01_parse_map/sql/01a_import_osm/03_osm2pgsql.sh {db_pgpass} {pbf_path}{filename} \
             {schema} {user} {host}".format(
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
             pbf_path="data/{atlas_region}/osm/".format(atlas_region=atlas_region),
@@ -134,14 +134,14 @@ def trigger_downstream():
     atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     c = Client(None, None)
     c.trigger_dag(
-        dag_id="03_parse_osm",
+        dag_id="01b_parse_osm",
         conf={"atlas_region": atlas_region},
         execution_date=datetime.now().astimezone(),
     )
 
 
 with DAG(
-    "01_import_osm",
+    "01a_import_osm",
     default_args={
         "depends_on_past": False,
         "email": ["airflow@example.com"],

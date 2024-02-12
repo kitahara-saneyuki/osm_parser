@@ -12,8 +12,8 @@ from utils.db import PGConn
 
 def test_dagbag():
     dag_bag = DagBag(include_examples=False)
-    dag_bag.process_file("01_import_osm.py")
-    dag_bag.process_file("03_parse_osm.py")
+    dag_bag.process_file("01a_import_osm.py")
+    dag_bag.process_file("01b_parse_osm.py")
     assert len(dag_bag.import_errors) == 0
 
 
@@ -22,7 +22,7 @@ def test_import_osm():
     c = Client(None, None)
     logging.info("----- Testing import OSM -----")
     c.trigger_dag(
-        dag_id="01_import_osm",
+        dag_id="01a_import_osm",
         conf={"atlas_region": "bristol"},
         execution_date=datetime.now().astimezone(),
     )
