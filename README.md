@@ -63,20 +63,19 @@ The output can be found at `data/<region>/output` folder, with 3 CSV files:
 
 ### VSCode Python Interpreter Set up
 
-First we need to install Python 3.7:
-- For Debian 12 users, you can use our script `make python37`
+First we need to install Python 3.8:
 - For Ubuntu users, it's recommended to use `sudo add-apt-repository ppa:deadsnakes/ppa`
 
 Then run:
 
 ```sh
-sudo apt-get install python3.7-distutils libsasl2-dev python3.7-dev libldap2-dev libssl-dev
-python3.7 -m virtualenv -p python3.7 venv
+sudo apt-get install python3.8-distutils libsasl2-dev python3.8-dev libldap2-dev libssl-dev
+python3.8 -m virtualenv -p python3.8 venv
 source venv/bin/activate
 pip install -r requirements-venv.txt
 ```
 
-Select `venv/bin/python3.7` as the Python interpreter in the bottom-right corner of VSCode window, and voila.
+Select `venv/bin/python3.8` as the Python interpreter in the bottom-right corner of VSCode window, and voila.
 
 ## Project Roadmap
 

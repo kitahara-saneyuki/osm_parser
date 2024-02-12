@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current version
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Create files to sync
         run: |
           cp README.md Home.md

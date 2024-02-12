@@ -63,20 +63,19 @@ make run region=<region>
 
 ### VSCode Python 解释器设置
 
-首先，我们需要安装 Python 3.7
-- 如果您使用 Debian 12 ，可以使用我们的脚本 `make python37`
-- 如果您使用 Ubuntu ，推荐使用 `sudo add-apt-repository ppa:deadsnakes/ppa` 安装 Python 3.7
+首先，我们需要安装 Python 3.8
+- 如果您使用 Ubuntu ，推荐使用 `sudo add-apt-repository ppa:deadsnakes/ppa` 安装 Python 3.8
 
 然后运行
 
 ```sh
-sudo apt-get install python3.7-distutils libsasl2-dev python3.7-dev libldap2-dev libssl-dev
-python3.7 -m virtualenv -p python3.7 venv
+sudo apt-get install python3.8-distutils libsasl2-dev python3.8-dev libldap2-dev libssl-dev
+python3.8 -m virtualenv -p python3.8 venv
 source venv/bin/activate
 pip install -r atlas/requirements-venv.txt
 ```
 
-点击 VSCode 窗口右下角的 Python 解释器，选择 `venv/bin/python3.7` 即可。
+点击 VSCode 窗口右下角的 Python 解释器，选择 `venv/bin/python3.8` 即可。
 
 ## 项目路线图
 
