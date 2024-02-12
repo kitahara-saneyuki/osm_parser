@@ -8,5 +8,7 @@ create table osm_modelingnodes as
     from osm_nodes inner join osm_roads
         on osm_nodes.id = ANY(osm_roads.nodes);
 
-create index osm_modelingnodes_idx on osm_modelingnodes using btree(id);
+create index if not exists osm_modelingnodes_idx on osm_modelingnodes using btree(id);
+create index if not exists osm_modelingnodes_longitude_idx on osm_modelingnodes using btree(longitude);
+create index if not exists osm_modelingnodes_latitude_idx on osm_modelingnodes using btree(latitude);
 commit;

@@ -1,5 +1,10 @@
 begin;
-update osm_edges set time_cost = (way_endoffset - way_startoffset) * 1000 / (cast (maxspeed as real) * 0.44704);
+update osm_edges
+set time_cost = (way_endoffset - way_startoffset) * 1000 / (cast (maxspeed as real) * 0.44704)
+where maxspeed > 0;
+update osm_edges
+set time_cost = 2147483647
+where maxspeed = 0;
 -- meter / (mile / hr) = meter / (1609.34 meter / 3600 sec) = sec / 0.44704
 -- so the unit of time_cost is second, we can multiply it by 1000 to have millisecond
 

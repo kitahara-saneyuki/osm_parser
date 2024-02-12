@@ -171,11 +171,12 @@ def import_edges():
     )
 
 
-def assign_maxspeed(traffic_mode_highways):
+def assign_maxspeed(traffic_mode, traffic_mode_highways):
     return "begin;\n" + "\n".join([
-        "update osm_edges set maxspeed = {maxspeed} where highway = '{highway}' and maxspeed is null;".format(
+        "update osm_edges set maxspeed = {maxspeed} where highway = '{highway}' {nullify_maxspeed};".format(
             maxspeed=maxspeed,
             highway=highway,
+            nullify_maxspeed="and maxspeed is null" if traffic_mode != "pedestrian" else ""
         ) for highway, maxspeed in traffic_mode_highways.items()
     ]) + "commit;\n"
 
@@ -185,7 +186,7 @@ def trigger_downstream():
     atlas_region = get_current_context()["dag_run"].conf["atlas_region"]
     c = Client(None, None)
     c.trigger_dag(
-        dag_id="05_export_osm",
+        dag_id="10_export_osm",
         conf={"atlas_region": atlas_region},
         execution_date=datetime.now().astimezone(),
     )
@@ -274,7 +275,7 @@ with DAG(
     assign_maxspeed = PostgresOperator(
         task_id="09_assign_maxspeed",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql=assign_maxspeed(traffic_mode_highways),
+        sql=assign_maxspeed(traffic_mode, traffic_mode_highways),
     )
 
     (

@@ -22,9 +22,11 @@ create table osm_edges as
 drop table if exists osm_edges_temp2;
 
 create index if not exists osm_edges_osm_idx on osm_edges using btree(osm_wayid);
+create index if not exists osm_edges_edge_nodes_idx on osm_edges using gin(edge_nodes);
 create index if not exists osm_edges_start_node_idx on osm_edges using btree(start_node);
 create index if not exists osm_edges_end_node_idx on osm_edges using btree(end_node);
 create index if not exists osm_edges_start_idx on osm_edges using btree(start_node_id);
 create index if not exists osm_edges_end_idx on osm_edges using btree(end_node_id);
+create index if not exists osm_edges_oneway_idx on osm_edges using btree(oneway);
 
 commit;
