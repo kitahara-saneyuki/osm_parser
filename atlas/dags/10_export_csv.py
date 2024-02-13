@@ -19,7 +19,7 @@ def copy2csv():
     )
     regional_conn = regional_cfg["db_conn"]
     run_shell_command(
-        "dags/sql/10_export_osm/02_copy2csv.sh {db_pgpass} data/{atlas_region}/output \
+        "dags/sql/10_export_csv/02_copy2csv.sh {db_pgpass} data/{atlas_region}/output \
             {host} {user} {schema}".format(
             db_pgpass="config/{atlas_region}.pgpass".format(atlas_region=atlas_region),
             atlas_region=atlas_region,
@@ -31,7 +31,7 @@ def copy2csv():
 
 
 with DAG(
-    "10_export_osm",
+    "10_export_csv",
     default_args={
         "depends_on_past": False,
         "email": ["airflow@example.com"],
@@ -49,6 +49,6 @@ with DAG(
     generate_arcs = PostgresOperator(
         task_id="01_generate_arcs",
         postgres_conn_id="{{ dag_run.conf['atlas_region'] }}",
-        sql="sql/10_export_osm/01_generate_arcs.sql",
+        sql="sql/10_export_csv/01_generate_arcs.sql",
     )
     generate_arcs >> copy2csv()

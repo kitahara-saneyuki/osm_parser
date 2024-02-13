@@ -1,6 +1,9 @@
 name: Wiki pages
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   sync_docs:

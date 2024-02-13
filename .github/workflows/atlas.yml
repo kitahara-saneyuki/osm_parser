@@ -44,7 +44,7 @@ jobs:
         docker-compose exec -T airflow-webserver ls -Rlt
         docker-compose exec -T airflow-webserver airflow dags unpause 01a_import_osm
         docker-compose exec -T airflow-webserver airflow dags unpause 01b_parse_osm
-        docker-compose exec -T airflow-webserver airflow dags unpause 10_export_osm
+        docker-compose exec -T airflow-webserver airflow dags unpause 10_export_csv
         docker-compose exec -T airflow-webserver pytest --disable-warnings --cov-report term --cov=dags
         docker-compose exec -T airflow-webserver airflow dags list-runs -d 01a_import_osm -o yaml
         docker-compose exec -T airflow-webserver airflow dags list-runs -d 01b_parse_osm -o yaml
