@@ -15,6 +15,7 @@ down:
 unpause:
 	$(dc) exec -T airflow-webserver airflow dags unpause 01a_import_osm
 	$(dc) exec -T airflow-webserver airflow dags unpause 01b_parse_osm
+	$(dc) exec -T airflow-webserver airflow dags unpause 01c_assign_maxspeed
 	$(dc) exec -T airflow-webserver airflow dags unpause 10_export_csv
 
 test:

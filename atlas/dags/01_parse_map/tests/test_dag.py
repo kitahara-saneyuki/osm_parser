@@ -4,6 +4,7 @@ import time
 
 from airflow.models import DagBag
 from airflow.api.client.local_client import Client
+from airflow.models import Variable
 
 from datetime import datetime
 
@@ -21,12 +22,15 @@ def test_import_osm():
     # Trigger DAGs
     c = Client(None, None)
     logging.info("----- Testing import OSM -----")
+    traffic_mode_stored = Variable.get("traffic_mode")
+    Variable.set("traffic_mode", "road")
     c.trigger_dag(
         dag_id="01a_import_osm",
         conf={"atlas_region": "bristol"},
         execution_date=datetime.now().astimezone(),
     )
     time.sleep(45)
+    Variable.set("traffic_mode", traffic_mode_stored)
 
     # Verifying data
     logging.info("----- Verifying OSM data -----")
