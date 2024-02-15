@@ -51,7 +51,7 @@ It's very simple to add your own regions and / or transportation modes in Atlas:
 After your region is set up, in the terminal, run
 
 ```sh
-make run region=<region>
+make run step=<step> region=<region>
 ```
 
 You can also trigger the job through GUI or REST API.

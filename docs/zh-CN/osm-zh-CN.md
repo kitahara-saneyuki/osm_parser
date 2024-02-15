@@ -109,9 +109,9 @@ B+ 树在本数据处理项目中的主要应用在于高速的稀疏检索，�
 [^5]: https://wiki.openstreetmap.org/wiki/Key:highway
 [^6]: https://osm2pgsql.org/doc/manual.html
 [^7]: https://download.geofabrik.de/north-america.html
-[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/01_parse_map/sql/01b_parse_osm/04_routing_nodes.sql
+[^8]: https://github.com/kitahara-saneyuki/osm_parser/blob/main/atlas/dags/01_parse_map/sql/01c_parse_osm/04_routing_nodes.sql
 [^9]: https://developer.aliyun.com/article/111793
-[^10]: https://github.com/kitahara-saneyuki/osm_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/01b_parse_osm.py#L21-L32
+[^10]: https://github.com/kitahara-saneyuki/osm_parser/blob/eb6f1bbbf0d039904c9ddc8b76a8217d61d90fe3/atlas/dags/01c_parse_osm.py#L21-L32
 [^11]: https://cloud.tencent.com/developer/article/1734536
 [^12]: https://www.dounaite.com/article/6254ffb57cc4ff68e6473f3f.html
 [^13]: https://en.wikipedia.org/wiki/X86_Bit_manipulation_instruction_set

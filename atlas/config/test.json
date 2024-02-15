@@ -1,0 +1,24 @@
+{
+    "admin_email": "airflow@example.com",
+    "traffic_mode_allowed": [
+        "pedestrian",
+        "road"
+    ],
+    "atlas_region_allowed": [
+        "washington",
+        "bristol"
+    ],
+    "traffic_mode": "road",
+    "sql_chunk": 100000,
+    "conn_default": {
+        "db_conn": {
+            "id": "airflow",
+            "type": "postgres",
+            "host": "postgres",
+            "schema": "airflow",
+            "user": "airflow",
+            "password": "airflow",
+            "port": 5432
+        }
+    }
+}

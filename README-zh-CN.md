@@ -40,18 +40,18 @@
 ### 在 Atlas 中添加新区域/交通模式
 
 Atlas 的 `atlas/config` 文件夹中提供了两个预设区域： **英国布里斯托尔**（用于自动测试）和 **美国华盛顿州** 。
-此外，还提供了两种预设交通模式： **公路** 和 **步行** 。
+此外，还提供了两种预设交通模式： **公路** （ `road` ） 和 **步行** （ `pedestrian` ） 。
 在 Atlas 中添加自己的地区和/或交通模式非常简单：
 
 - 在 `atlas/config/regions` 和/或 `atlas/config/modes` 文件夹中创建自己的配置 JSON 文件、
-- 在 `atlas/config/commons.json` 的 `atlas_region_allowed` 或 `traffic_mode_allowed` 字段中添加您自己的区域/模式，字段为，这样 Airflow DAG 就能找到新配置。
+- 在 `atlas/config/commons.json` 的 `atlas_region_allowed` 或 `traffic_mode_allowed` 字段中添加您自己的区域/模式，这样 Airflow DAG 就能找到新配置。
 
 ### 执行 Atlas 任务并输出 CSV 格式
 
 设置完成后，在终端运行
 
 ```sh
-make run region=<region>
+make run step=<step> region=<region>
 ```
 
 您也可以通过 GUI 或 REST API 执行任务。
