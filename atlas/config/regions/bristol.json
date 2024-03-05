@@ -1,7 +1,7 @@
 {
     "download_server_url": "https://download.geofabrik.de/",
     "download_pbf_url": "europe/great-britain/england/",
-    "download_pbf_timestamp": "231101",
+    "download_pbf_timestamp": "240101",
     "db_conn": {
         "id": "bristol",
         "type": "postgres",
@@ -15,18 +15,18 @@
         "road": {
             "motorway": 49,
             "motorway_link": 53,
-            "primary": 1250,
-            "primary_link": 29,
-            "residential": 11209,
+            "primary": 1182,
+            "primary_link": 27,
+            "residential": 11236,
             "road": 3,
-            "secondary": 1123,
+            "secondary": 1122,
             "secondary_link": 2,
             "tertiary": 1205,
             "tertiary_link": 3,
-            "trunk": 850,
-            "trunk_link": 70,
-            "living_street": 92,
-            "unclassified": 2091
+            "trunk": 920,
+            "trunk_link": 72,
+            "living_street": 91,
+            "unclassified": 2094
         }
     }
 }

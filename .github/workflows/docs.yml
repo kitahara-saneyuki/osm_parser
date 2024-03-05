@@ -1,0 +1,29 @@
+name: Wiki pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync_docs:
+    name: Sync docs to GitHub wiki
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current version
+        uses: actions/checkout@v4
+      - name: Create files to sync
+        run: |
+          cp README.md Home.md
+          cp README-zh-CN.md Home-zh-CN.md
+          sed -i 's/.md//g' *.md docs/*/*.md
+          sed -i 's/docs\/en-US\///g' *.md docs/*/*.md
+          sed -i 's/docs\/zh-CN\///g' *.md docs/*/*.md
+          sed -i 's/README/Home/g' Home.md Home-zh-CN.md
+      - name: Sync with local action
+        uses: kai-tub/external-repo-sync-action@v1
+        with:
+          source-directory: "."
+          include-patterns: "Home*.md docs/*/*.md"
+        env:
+          GH_ACCESS_TOKEN: ${{ secrets.GH_PAT }}

@@ -7,18 +7,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      uses: docker/setup-buildx-action@v3
     - name: Cache Docker layers
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /tmp/.buildx-cache-atlas
         key: ${{ runner.os }}-buildx-atlas-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-buildx-atlas-
     - name: Build
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v5
       with:
         push: false
         load: true
@@ -42,10 +42,17 @@ jobs:
         docker-compose exec -u root -T airflow-webserver chmod 0600 ./config/bristol.pgpass
         docker-compose exec -u root -T airflow-webserver chmod 0600 ./config/default.pgpass
         docker-compose exec -T airflow-webserver ls -Rlt
-        docker-compose exec -T airflow-webserver airflow dags unpause 01_import_osm
-        docker-compose exec -T airflow-webserver airflow dags unpause 03_parse_osm
-        docker-compose exec -T airflow-webserver airflow dags unpause 05_export_osm
+        docker-compose exec -T airflow-webserver airflow dags unpause 01a_download_pbf
+        docker-compose exec -T airflow-webserver airflow dags unpause 01a_set_test_vars
+        docker-compose exec -T airflow-webserver airflow dags unpause 01b_import_osm
+        docker-compose exec -T airflow-webserver airflow dags unpause 01c_parse_osm
+        docker-compose exec -T airflow-webserver airflow dags unpause 01d_assign_maxspeed
+        docker-compose exec -T airflow-webserver airflow dags unpause 10_export_csv
         docker-compose exec -T airflow-webserver pytest --disable-warnings --cov-report term --cov=dags
-        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01_import_osm -o yaml
-        docker-compose exec -T airflow-webserver airflow dags list-runs -d 03_parse_osm -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01a_download_pbf -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01a_set_test_vars -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01b_import_osm -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01c_parse_osm -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 01d_assign_maxspeed -o yaml
+        docker-compose exec -T airflow-webserver airflow dags list-runs -d 10_export_csv -o yaml
         docker-compose exec -T airflow-webserver find ./logs/ -path "*manual*" -type f -exec cat {} +

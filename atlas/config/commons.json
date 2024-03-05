@@ -8,7 +8,7 @@
         "washington",
         "bristol"
     ],
-    "traffic_mode": "road",
+    "traffic_mode": "pedestrian",
     "sql_chunk": 100000,
     "conn_default": {
         "db_conn": {
