@@ -54,6 +54,7 @@ make run region=<region>
 然后运行
 
 ```sh
+sudo apt-get install python3.7-dev libmysqlclient-dev libldap2-dev libsasl2-dev
 python3.7 -m virtualenv -p python3.7 venv
 source venv/bin/activate
 pip install -r atlas/requirements-venv.txt

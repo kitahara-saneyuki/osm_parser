@@ -54,6 +54,7 @@ First we need to install Python 3.7 by `make python37` (the script is tested und
 Then run:
 
 ```sh
+sudo apt-get install python3.7-dev libmysqlclient-dev libldap2-dev
 python3.7 -m virtualenv -p python3.7 venv
 source venv/bin/activate
 pip install -r requirements-venv.txt
